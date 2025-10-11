@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Guide Dashboard - Daanbantayan Paradise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #007bbf, #00a8ff);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bbf, #00a8ff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #ff6b7a);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #17a2b8, #20c997);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #005f99, #0088dd);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(45deg, #1e7e34, #1b855d);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #c82333, #e63946);
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(45deg, #117a8b, #138496);
+        }
+
+        .dashboard {
+            padding: 7rem 0 4rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header h2 {
+            color: #007bbf;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            text-align: center;
+            background: linear-gradient(135deg, #007bbf, #00a8ff);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><path fill="%23ffffff" opacity="0.1" d="M0,100 Q150,50 300,100 L300,200 L0,200 Z"/></svg>') no-repeat;
+            background-size: cover;
+        }
+
+        .stat-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: #007bbf;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .booking-item {
+            padding: 1.2rem;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .booking-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-details {
+            margin-bottom: 1rem;
+        }
+
+        .booking-details p {
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-completed { background: #cce5ff; color: #004085; }
+        .status-declined { background: #f8d7da; color: #721c24; }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .opportunity-badge {
+            background: #e7f3ff;
+            color: #007bff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .profile-details {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .profile-details p {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .user-welcome {
+            color: white;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(0, 123, 191, 0.95);
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Daanbantayan Paradise</div>
+            <ul class="nav-links">
+                <li><a href="index.html#home" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="index.html#bookingsSection" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="index.html#aboutSection" onclick="showSection('about')"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="index.html#teamSection" onclick="showSection('team')"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="index.html#contactSection" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons"></div>
+        </div>
+    </nav>
+
+    <!-- Tour Guide Dashboard -->
+    <div class="dashboard" id="tourGuideDashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-map-signs"></i> Tour Guide Dashboard</h2>
+                <div class="header-actions">
+                    <button class="btn btn-info" onclick="viewProfile()"><i class="fas fa-user"></i> View Profile</button>
+                    <button class="btn btn-secondary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                    <div class="stat-number" id="totalBookings">0</div>
+                    <div class="stat-label">Total Opportunities</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-number" id="pendingBookings">0</div>
+                    <div class="stat-label">Available Bookings</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number" id="activeBookings">0</div>
+                    <div class="stat-label">Active Tours</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-number" id="completedBookings">0</div>
+                    <div class="stat-label">Completed Tours</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> Available Booking Opportunities</h3>
+                    <div id="pendingBookingsList">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-list"></i> My Active & Completed Tours</h3>
+                    <div id="activeCompletedBookings">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeProfileModal()">&times;</span>
+            <h2><i class="fas fa-user"></i> Profile</h2>
+            <div class="profile-details" id="profileDetails">
+                <p><i class="fas fa-spinner"></i> Loading profile...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let bookingsData = { pending: [], assigned: [] };
+
+        function showSection(section) {
+            window.location.href = `index.html#${section}`;
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            updateAuthButtons();
+            window.location.href = 'index.html';
+        }
+
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span class="user-welcome">Welcome, ${currentUser.name}!</span>
+                    <a href="tour_guide.html" class="btn btn-secondary"><i class="fas fa-map-signs"></i> Dashboard</a>
+                    <button class="btn btn-primary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="index.html#login" class="btn btn-secondary" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="index.html#register" class="btn btn-primary" onclick="showRegister()"><i class="fas fa-user-plus"></i> Sign Up</a>
+                `;
+            }
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Loading...</div>';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
+        }
+
+        async function loadTourGuideData() {
+            if (!currentUser) return;
+            showLoading('pendingBookingsList');
+            showLoading('activeCompletedBookings');
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('No token found');
+
+                const response = await fetch('/api/tourguide/bookings', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to fetch bookings');
+                }
+                const data = await response.json();
+                bookingsData = data.bookings || { pending: [], assigned: [] };
+
+                // Calculate stats
+                const totalOpportunities = bookingsData.pending.length + bookingsData.assigned.length;
+                const pendingCount = bookingsData.pending.length;
+                const activeCount = bookingsData.assigned.filter(b => b.status === 'active').length;
+                const completedCount = bookingsData.assigned.filter(b => b.status === 'completed').length;
+
+                document.getElementById('totalBookings').textContent = totalOpportunities;
+                document.getElementById('pendingBookings').textContent = pendingCount;
+                document.getElementById('activeBookings').textContent = activeCount;
+                document.getElementById('completedBookings').textContent = completedCount;
+
+                // Render pending opportunities
+                const pendingBookingsEl = document.getElementById('pendingBookingsList');
+                const pendingList = bookingsData.pending;
+                pendingBookingsEl.innerHTML = pendingList.length > 0 ? pendingList.map(booking => `
+                    <div class="booking-item">
+                        <div class="booking-header">
+                            <strong>${booking.package || 'N/A'} <span class="opportunity-badge">New Opportunity</span></strong>
+                            <span class="status-badge status-pending">Pending</span>
+                        </div>
+                        <div class="booking-details">
+                            <p><i class="fas fa-user"></i> ${booking.user?.name || 'Unknown Traveler'}</p>
+                            <p><i class="fas fa-calendar"></i> ${new Date(booking.checkin).toLocaleDateString()} - ${new Date(booking.checkout).toLocaleDateString()}</p>
+                            <p><i class="fas fa-users"></i> Guests: ${booking.guests || 'N/A'}</p>
+                            <p><i class="fas fa-money-bill-wave"></i> Total: ₱${(booking.totalAmount || 0).toLocaleString()}</p>
+                            
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="acceptBooking('${booking._id}')"><i class="fas fa-check"></i> Accept Tour</button>
+                            <button class="btn btn-danger" onclick="declineBooking('${booking._id}')"><i class="fas fa-times"></i> Pass</button>
+                        </div>
+                    </div>
+                `).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-bell-slash"></i> No new booking opportunities right now</p>';
+
+                // Render assigned (active/completed)
+                const activeCompletedEl = document.getElementById('activeCompletedBookings');
+                const assignedList = bookingsData.assigned;
+                activeCompletedEl.innerHTML = assignedList.length > 0 ? assignedList.map(booking => `
+                    <div class="booking-item">
+                        <div class="booking-header">
+                            <strong>${booking.package || 'N/A'}</strong>
+                            <span class="status-badge status-${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+                        </div>
+                        <div class="booking-details">
+                            <p><i class="fas fa-user"></i> ${booking.user?.name || 'Traveler'}</p>
+                            <p><i class="fas fa-calendar"></i> ${new Date(booking.checkin).toLocaleDateString()} - ${new Date(booking.checkout).toLocaleDateString()}</p>
+                            <p><i class="fas fa-users"></i> Guests: ${booking.guests || 'N/A'}</p>
+                            <p><i class="fas fa-money-bill-wave"></i> Total: ₱${(booking.totalAmount || 0).toLocaleString()}</p>
+                            ${booking.rating ? `<p class="rating-display"><i class="fas fa-star"></i> Rated: ${booking.rating}/5</p>` : ''}
+                        </div>
+                        ${booking.status === 'active' ? `
+                            <div class="actions">
+                                <button class="btn btn-primary" onclick="completeTour('${booking._id}')"><i class="fas fa-flag-checkered"></i> Mark Completed</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-check-circle"></i> No active or completed tours yet</p>';
+            } catch (error) {
+                console.error('Error loading tour guide data:', error);
+                showError('pendingBookingsList', 'Failed to load opportunities: ' + error.message);
+                showError('activeCompletedBookings', 'Failed to load tours: ' + error.message);
+            }
+        }
+
+        async function acceptBooking(bookingId) {
+            if (confirm('Accept this booking opportunity? You can only have one active tour at a time.')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/tourguide/bookings/${bookingId}/accept`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to accept booking');
+                    alert('Booking accepted! Check your email for traveler details.');
+                    loadTourGuideData(); // Refresh
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+        }
+
+        async function declineBooking(bookingId) {
+            if (confirm('Pass on this opportunity?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/tourguide/bookings/${bookingId}/decline`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to decline');
+                    alert('Opportunity passed. More will come soon!');
+                    loadTourGuideData();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+        }
+
+        async function completeTour(bookingId) {
+            if (confirm('Mark this tour as completed?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/tourguide/bookings/${bookingId}/complete`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to complete tour');
+                    alert('Tour completed! Great job. Ready for the next one?');
+                    loadTourGuideData();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+        }
+
+        function viewProfile() {
+            const modal = document.getElementById('profileModal');
+            const profileDetails = document.getElementById('profileDetails');
+            profileDetails.innerHTML = `
+                <p><i class="fas fa-user"></i> Name: ${currentUser.name}</p>
+                <p><i class="fas fa-envelope"></i> Email: ${currentUser.email}</p>
+                <p><i class="fas fa-phone"></i> Phone: ${currentUser.phone || 'N/A'}</p>
+                <p><i class="fas fa-calendar-check"></i> Joined: ${new Date(currentUser.createdAt || Date.now()).toLocaleDateString()}</p>
+                <p><i class="fas fa-map-marker-alt"></i> Role: Tour Guide</p>
+                <p><i class="fas fa-star"></i> Completed Tours: ${document.getElementById('completedBookings').textContent}</p>
+            `;
+            modal.style.display = 'block';
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const userStr = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('token');
+            if (!userStr || !token) {
+                alert('Session expired. Please login again.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                if (!currentUser || !currentUser.name || currentUser.role !== 'tourguide') {
+                    alert('Tour guide access required');
+                    window.location.href = 'index.html#login';
+                    return;
+                }
+
+                updateAuthButtons();
+                loadTourGuideData();
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                alert('Session error. Please login again.');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(0, 123, 191, 0.98)';
+                navbar.style.backdropFilter = 'blur(15px)';
+            } else {
+                navbar.style.background = 'linear-gradient(135deg, #007bbf, #00a8ff)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('profileModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Daanbantayan Paradise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #007bbf, #00a8ff);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bbf, #00a8ff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #ff6b7a);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #005f99, #0088dd);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #c82333, #e63946);
+        }
+
+        .dashboard {
+            padding: 7rem 0 4rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header h2 {
+            color: #007bbf;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            text-align: center;
+            background: linear-gradient(135deg, #007bbf, #00a8ff);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><path fill="%23ffffff" opacity="0.1" d="M0,100 Q150,50 300,100 L300,200 L0,200 Z"/></svg>') no-repeat;
+            background-size: cover;
+        }
+
+        .stat-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: #007bbf;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .booking-item, .application-item {
+            padding: 1.2rem;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .booking-item:hover, .application-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .booking-header, .application-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-details, .application-details {
+            margin-bottom: 1rem;
+        }
+
+        .booking-details p, .application-details p {
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-active { background: #cce5ff; color: #004085; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .status-completed { background: #e2e3e5; color: #383d41; }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .user-welcome {
+            color: white;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(0, 123, 191, 0.95);
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-header, .application-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Daanbantayan Paradise</div>
+            <ul class="nav-links">
+                <li><a href="index.html#home" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="index.html#bookingsSection" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="index.html#aboutSection" onclick="showSection('about')"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="index.html#teamSection" onclick="showSection('team')"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="index.html#contactSection" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons"></div>
+        </div>
+    </nav>
+
+    <!-- Admin Dashboard -->
+    <div class="dashboard" id="adminDashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
+                <button class="btn btn-secondary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="stat-number" id="totalBookings">0</div>
+                    <div class="stat-label">Total Bookings</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-number" id="pendingBookings">0</div>
+                    <div class="stat-label">Pending Bookings</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="stat-number" id="totalApplications">0</div>
+                    <div class="stat-label">Total Applications</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
+                    <div class="stat-number" id="pendingApplications">0</div>
+                    <div class="stat-label">Pending Applications</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-list"></i> All Bookings</h3>
+                    <div id="allBookings">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> Pending Bookings</h3>
+                    <div id="pendingBookingsList">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-user-plus"></i> All Tour Guide Applications</h3>
+                    <div id="allApplications">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-user-clock"></i> Pending Tour Guide Applications</h3>
+                    <div id="pendingApplicationsList">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let isLoading = true;
+        let bookings = [];
+        let applications = [];
+
+        function showSection(section) {
+            window.location.href = `index.html#${section}`;
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            updateAuthButtons();
+            window.location.href = 'index.html';
+        }
+
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span class="user-welcome">Welcome, ${currentUser.name}!</span>
+                    <a href="admin_dashboard.html" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <button class="btn btn-primary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="index.html#login" class="btn btn-secondary" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="index.html#register" class="btn btn-primary" onclick="showRegister()"><i class="fas fa-user-plus"></i> Sign Up</a>
+                `;
+            }
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Loading...</div>';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
+        }
+
+        async function loadAdminData() {
+            if (!currentUser) return;
+            isLoading = true;
+            showLoading('allBookings');
+            showLoading('pendingBookingsList');
+            showLoading('allApplications');
+            showLoading('pendingApplicationsList');
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('No token found');
+
+                // Fetch bookings
+                const bookingsResponse = await fetch('/api/bookings/all', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!bookingsResponse.ok) {
+                    const errorData = await bookingsResponse.json();
+                    throw new Error(errorData.error || 'Failed to fetch bookings');
+                }
+                bookings = await bookingsResponse.json();
+
+                // Fetch applications
+                const appsResponse = await fetch('/api/tourguide/applications', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!appsResponse.ok) {
+                    const errorData = await appsResponse.json();
+                    throw new Error(errorData.error || 'Failed to fetch applications');
+                }
+                const appsData = await appsResponse.json();
+                applications = appsData.applications;
+
+                const totalBookings = bookings.length;
+                const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+                const totalApplications = applications.length;
+                const pendingApplications = applications.filter(a => a.status === 'pending').length;
+
+                document.getElementById('totalBookings').textContent = totalBookings;
+                document.getElementById('pendingBookings').textContent = pendingBookings;
+                document.getElementById('totalApplications').textContent = totalApplications;
+                document.getElementById('pendingApplications').textContent = pendingApplications;
+
+                // Render all bookings
+                const allBookingsEl = document.getElementById('allBookings');
+                allBookingsEl.innerHTML = bookings.length > 0 ? bookings.map(booking => {
+                    const statusClass = `status-${booking.status || 'pending'}`;
+                    return `
+                        <div class="booking-item">
+                            <div class="booking-header">
+                                <strong>${booking.package || 'N/A'}</strong>
+                                <span class="status-badge ${statusClass}">${booking.status || 'pending'}</span>
+                            </div>
+                            <div class="booking-details">
+                                <p><i class="fas fa-user"></i> ${booking.user?.name || 'Unknown User'}</p>
+                                <p><i class="fas fa-hashtag"></i> Ref: ${booking.reference}</p>
+                                <p><i class="fas fa-calendar"></i> ${new Date(booking.checkin).toLocaleDateString()} - ${new Date(booking.checkout).toLocaleDateString()}</p>
+                            </div>
+                            ${booking.status === 'pending' ? `
+                                <div class="actions">
+                                    <button class="btn btn-primary" onclick="approveBooking('${booking._id}')"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="btn btn-danger" onclick="rejectBooking('${booking._id}')"><i class="fas fa-times"></i> Reject</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-inbox"></i> No bookings available</p>';
+
+                // Render pending bookings
+                const pendingBookingsEl = document.getElementById('pendingBookingsList');
+                const pendingBookingsList = bookings.filter(b => b.status === 'pending');
+                pendingBookingsEl.innerHTML = pendingBookingsList.length > 0 ? pendingBookingsList.map(booking => `
+                    <div class="booking-item">
+                        <div class="booking-header">
+                            <strong>${booking.package || 'N/A'}</strong>
+                            <span class="status-badge status-pending">Pending</span>
+                        </div>
+                        <div class="booking-details">
+                            <p><i class="fas fa-user"></i> ${booking.user?.name || 'Unknown User'}</p>
+                            <p><i class="fas fa-id-card"></i> ID: ${booking.idNumber || 'N/A'}</p>
+                            <p><i class="fas fa-phone"></i> Contact: ${booking.contactNumber || booking.user?.phone || 'N/A'}</p>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="approveBooking('${booking._id}')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-danger" onclick="rejectBooking('${booking._id}')"><i class="fas fa-times"></i> Reject</button>
+                        </div>
+                    </div>
+                `).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-check-circle"></i> No pending bookings</p>';
+
+                // Render all applications
+                const allApplicationsEl = document.getElementById('allApplications');
+                allApplicationsEl.innerHTML = applications.length > 0 ? applications.map(application => {
+                    const statusClass = `status-${application.status || 'pending'}`;
+                    return `
+                        <div class="application-item">
+                            <div class="application-header">
+                                <strong>${application.name || 'N/A'}</strong>
+                                <span class="status-badge ${statusClass}">${application.status || 'pending'}</span>
+                            </div>
+                            <div class="application-details">
+                                <p><i class="fas fa-user"></i> ${application.user?.name || 'Unknown User'}</p>
+                                <p><i class="fas fa-envelope"></i> ${application.user?.email || 'N/A'}</p>
+                                <p><i class="fas fa-phone"></i> ${application.phone || 'N/A'}</p>
+                                <p><i class="fas fa-map-marker-alt"></i> ${application.address}</p>
+                                <p><i class="fas fa-language"></i> Languages: ${application.languages}</p>
+                                <p><i class="fas fa-clock"></i> Applied: ${new Date(application.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            ${application.status === 'pending' ? `
+                                <div class="actions">
+                                    <button class="btn btn-primary" onclick="approveApplication('${application._id}')"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="btn btn-danger" onclick="rejectApplication('${application._id}')"><i class="fas fa-times"></i> Reject</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-inbox"></i> No applications available</p>';
+
+                // Render pending applications
+                const pendingApplicationsEl = document.getElementById('pendingApplicationsList');
+                const pendingAppsList = applications.filter(a => a.status === 'pending');
+                pendingApplicationsEl.innerHTML = pendingAppsList.length > 0 ? pendingAppsList.map(application => `
+                    <div class="application-item">
+                        <div class="application-header">
+                            <strong>${application.name || 'N/A'}</strong>
+                            <span class="status-badge status-pending">Pending</span>
+                        </div>
+                        <div class="application-details">
+                            <p><i class="fas fa-user"></i> ${application.user?.name || 'Unknown User'}</p>
+                            <p><i class="fas fa-envelope"></i> ${application.user?.email || 'N/A'}</p>
+                            <p><i class="fas fa-phone"></i> ${application.phone || 'N/A'}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${application.address}</p>
+                            <p><i class="fas fa-language"></i> Languages: ${application.languages}</p>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="approveApplication('${application._id}')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-danger" onclick="rejectApplication('${application._id}')"><i class="fas fa-times"></i> Reject</button>
+                        </div>
+                    </div>
+                `).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-check-circle"></i> No pending applications</p>';
+
+                isLoading = false;
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showError('allBookings', 'Failed to load bookings: ' + error.message);
+                showError('pendingBookingsList', 'Failed to load pending bookings: ' + error.message);
+                showError('allApplications', 'Failed to load applications: ' + error.message);
+                showError('pendingApplicationsList', 'Failed to load pending applications: ' + error.message);
+                isLoading = false;
+            }
+        }
+
+        async function approveBooking(bookingId) {
+            if (confirm('Are you sure you want to approve this booking?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/bookings/${bookingId}/approve`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to approve booking');
+                    alert('Booking approved successfully!');
+                    loadAdminData();
+                } catch (error) {
+                    alert('Error approving booking: ' + error.message);
+                }
+            }
+        }
+
+        async function rejectBooking(bookingId) {
+            if (confirm('Are you sure you want to reject this booking?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/bookings/${bookingId}/reject`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to reject booking');
+                    alert('Booking rejected successfully!');
+                    loadAdminData();
+                } catch (error) {
+                    alert('Error rejecting booking: ' + error.message);
+                }
+            }
+        }
+
+        async function approveApplication(applicationId) {
+            if (confirm('Are you sure you want to approve this application? This will grant tour guide access.')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/tourguide/applications/${applicationId}/approve`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to approve application');
+                    alert('Application approved successfully!');
+                    loadAdminData();
+                } catch (error) {
+                    alert('Error approving application: ' + error.message);
+                }
+            }
+        }
+
+        async function rejectApplication(applicationId) {
+            if (confirm('Are you sure you want to reject this application?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/tourguide/applications/${applicationId}/reject`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to reject application');
+                    alert('Application rejected successfully!');
+                    loadAdminData();
+                } catch (error) {
+                    alert('Error rejecting application: ' + error.message);
+                }
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const userStr = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('token');
+            if (!userStr || !token) {
+                alert('Session expired. Please login again.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                // Validate user data structure
+                if (!currentUser || !currentUser.name || !currentUser.role) {
+                    alert('Invalid session data. Please login again.');
+                    // Clear invalid data
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('token');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                if (currentUser.role !== 'admin') {
+                    alert('Admin access required');
+                    window.location.href = 'index.html#login';
+                    return;
+                }
+
+                updateAuthButtons();
+                loadAdminData();
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                alert('Session error. Please login again.');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(0, 123, 191, 0.98)';
+                navbar.style.backdropFilter = 'blur(15px)';
+            } else {
+                navbar.style.background = 'linear-gradient(135deg, #007bbf, #00a8ff)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            }
+        });
+    </script>
+</body>
+</html>

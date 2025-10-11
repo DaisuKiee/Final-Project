@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Adventure - Daanbantayan Paradise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            background: rgba(0, 123, 191, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bbf, #00a8ff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(45deg, #005f99, #0088dd);
+        }
+
+        .booking-process {
+            padding: 6rem 0 4rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .booking-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .booking-step {
+            display: none;
+        }
+
+        .booking-step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bbf;
+            box-shadow: 0 0 0 3px rgba(0, 123, 191, 0.1);
+        }
+
+        .booking-details {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            font-weight: 600;
+            color: #666;
+            z-index: 1;
+        }
+
+        .step.active {
+            color: #007bbf;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e9ecef;
+            z-index: 0;
+        }
+
+        .step.active ~ .step::before {
+            background: #007bbf;
+        }
+
+        .user-welcome {
+            color: white;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: rgba(0, 123, 191, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 1rem;
+                width: 100%;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .step-indicator {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .step {
+                text-align: left;
+            }
+
+            .step-indicator::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .booking-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Daanbantayan Paradise</div>
+            <ul class="nav-links">
+                <li><a href="index.html#home" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="index.html#bookingsSection" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="index.html#aboutSection" onclick="showSection('about')"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="index.html#teamSection" onclick="showSection('team')"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="index.html#contactSection" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons"></div>
+        </div>
+    </nav>
+
+    <!-- Booking Process -->
+    <div class="booking-process" id="bookingProcess">
+        <div class="container">
+            <div class="booking-container">
+                <div class="step-indicator">
+                    <div class="step active" id="step1">1. Details</div>
+                    <div class="step" id="step2">2. Verification</div>
+                    <div class="step" id="step3">3. Payment</div>
+                    <div class="step" id="step4">4. Confirmation</div>
+                </div>
+                <div class="booking-details" id="bookingDetails"></div>
+                <div class="booking-step active" id="detailsStep">
+                    <h2>Booking Details</h2>
+                    <form id="detailsForm" onsubmit="nextStep(event, 1)">
+                        <div class="form-group">
+                            <label for="checkin">Check-in Date</label>
+                            <input type="date" id="checkin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkout">Check-out Date</label>
+                            <input type="date" id="checkout" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guests">Number of Guests</label>
+                            <select id="guests" required>
+                                <option value="1">1 Guest</option>
+                                <option value="2">2 Guests</option>
+                                <option value="3">3-4 Guests</option>
+                                <option value="5">5+ Guests</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Next</button>
+                    </form>
+                </div>
+                <div class="booking-step" id="verificationStep">
+                    <h2>Verification</h2>
+                    <form id="verificationForm" onsubmit="nextStep(event, 2)">
+                        <div class="form-group">
+                            <label for="governmentId">Government ID (Upload)</label>
+                            <input type="file" id="governmentId" accept="image/*,.pdf" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idNumber">ID Number</label>
+                            <input type="text" id="idNumber" required placeholder="Enter ID Number">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number</label>
+                            <input type="tel" id="contactNumber" required placeholder="+63 XXX XXX XXXX">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Next</button>
+                    </form>
+                </div>
+                <div class="booking-step" id="paymentStep">
+                    <h2>Payment</h2>
+                    <form id="paymentForm" onsubmit="nextStep(event, 3)">
+                        <div class="form-group">
+                            <label for="paymentMethod">Payment Method</label>
+                            <select id="paymentMethod" required>
+                                <option value="credit">Credit Card</option>
+                                <option value="debit">Debit Card</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="gcash">GCash</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="specialRequests">Special Requests</label>
+                            <textarea id="specialRequests" rows="4" placeholder="Any special requests?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                    </form>
+                </div>
+                <div class="booking-step" id="confirmationStep">
+                    <h2>Booking Confirmed</h2>
+                    <div id="confirmationDetails"></div>
+                    <button class="btn btn-primary" onclick="window.location.href='user_dashboard.html'"><i class="fas fa-tachometer-alt"></i> Go to Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let selectedBooking = null;
+        let currentStep = 1;
+        let bookingData = {};
+
+        function showSection(section) {
+            window.location.href = `index.html#${section}`;
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            updateAuthButtons();
+            window.location.href = 'index.html';
+        }
+
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span class="user-welcome">Welcome, ${currentUser.name}!</span>
+                    <a href="${currentUser.role === 'admin' ? 'admin_dashboard.html' : 'user_dashboard.html'}" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <button class="btn btn-primary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="index.html#login" class="btn btn-secondary" onclick="showLogin()">Login</a>
+                    <a href="index.html#register" class="btn btn-primary" onclick="showRegister()">Sign Up</a>
+                `;
+            }
+        }
+
+        function showBookingStep(step) {
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById(`${['details', 'verification', 'payment', 'confirmation'][step - 1]}Step`).classList.add('active');
+            currentStep = step;
+        }
+
+        async function nextStep(e, step) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+
+            try {
+                if (step === 1) {
+                    bookingData.checkin = document.getElementById('checkin').value;
+                    bookingData.checkout = document.getElementById('checkout').value;
+                    bookingData.guests = parseInt(document.getElementById('guests').value);
+                    if (!bookingData.checkin || !bookingData.checkout || !bookingData.guests) {
+                        throw new Error('Please fill in all fields');
+                    }
+                    if (new Date(bookingData.checkin) >= new Date(bookingData.checkout)) {
+                        throw new Error('Check-out date must be after check-in date');
+                    }
+                    showBookingStep(2);
+                } else if (step === 2) {
+                    bookingData.governmentId = document.getElementById('governmentId').files[0]?.name || 'No file uploaded';
+                    bookingData.idNumber = document.getElementById('idNumber').value;
+                    bookingData.contactNumber = document.getElementById('contactNumber').value;
+                    if (!bookingData.idNumber || !bookingData.contactNumber) {
+                        throw new Error('Please fill in all required fields');
+                    }
+                    showBookingStep(3);
+                } else if (step === 3) {
+                    bookingData.paymentMethod = document.getElementById('paymentMethod').value;
+                    bookingData.specialRequests = document.getElementById('specialRequests').value;
+                    if (!bookingData.paymentMethod) {
+                        throw new Error('Please select a payment method');
+                    }
+
+                    // Calculate total amount (example: price per night * number of nights)
+                    const checkinDate = new Date(bookingData.checkin);
+                    const checkoutDate = new Date(bookingData.checkout);
+                    const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                    bookingData.totalAmount = selectedBooking.price * nights;
+
+                    const response = await fetch('/api/bookings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            package: selectedBooking.title,
+                            checkin: bookingData.checkin,
+                            checkout: bookingData.checkout,
+                            guests: bookingData.guests,
+                            totalAmount: bookingData.totalAmount,
+                            paymentMethod: bookingData.paymentMethod,
+                            specialRequests: bookingData.specialRequests,
+                            governmentId: bookingData.governmentId,
+                            idNumber: bookingData.idNumber,
+                            contactNumber: bookingData.contactNumber
+                        })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Booking failed');
+
+                    bookingData.reference = data.reference;
+                    showBookingStep(4);
+                    document.getElementById('confirmationDetails').innerHTML = `
+                        <p><strong>Booking Reference:</strong> ${data.reference}</p>
+                        <p><strong>Package:</strong> ${selectedBooking.title}</p>
+                        <p><strong>Check-in:</strong> ${new Date(bookingData.checkin).toLocaleDateString()}</p>
+                        <p><strong>Check-out:</strong> ${new Date(bookingData.checkout).toLocaleDateString()}</p>
+                        <p><strong>Total:</strong> ₱${bookingData.totalAmount.toLocaleString()}</p>
+                        <p><strong>Status:</strong> ${data.status}</p>
+                        <p>You will receive an email and SMS confirmation shortly.</p>
+                    `;
+                }
+            } catch (error) {
+                alert(error.message);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+            selectedBooking = JSON.parse(localStorage.getItem('selectedBooking')) || null;
+            if (!currentUser) {
+                alert('Please login to make a booking');
+                window.location.href = 'index.html#login';
+                return;
+            }
+            if (!selectedBooking) {
+                alert('No booking selected');
+                window.location.href = 'index.html#bookings';
+                return;
+            }
+            updateAuthButtons();
+            document.getElementById('bookingDetails').innerHTML = `
+                <h3>${selectedBooking.title}</h3>
+                <p>${selectedBooking.description}</p>
+                <p><strong>Price:</strong> ₱${selectedBooking.price.toLocaleString()}/night</p>
+                <p><strong>Location:</strong> ${selectedBooking.location}</p>
+            `;
+
+            // Set default dates
+            const checkinDate = document.getElementById('checkin');
+            const checkoutDate = document.getElementById('checkout');
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            checkinDate.valueAsDate = today;
+            checkoutDate.valueAsDate = tomorrow;
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(0, 123, 191, 0.98)';
+                navbar.style.backdropFilter = 'blur(15px)';
+            } else {
+                navbar.style.background = 'rgba(0, 123, 191, 0.95)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            }
+        });
+    </script>
+</body>
+</html>

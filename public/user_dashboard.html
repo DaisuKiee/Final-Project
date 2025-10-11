@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Daanbantayan Paradise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #007bbf, #00a8ff);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bbf, #00a8ff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #005f99, #0088dd);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(45deg, #1e7e34, #1b855d);
+        }
+
+        .dashboard {
+            padding: 7rem 0 4rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header h2 {
+            color: #007bbf;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            text-align: center;
+            background: linear-gradient(135deg, #007bbf, #00a8ff);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><path fill="%23ffffff" opacity="0.1" d="M0,100 Q150,50 300,100 L300,200 L0,200 Z"/></svg>') no-repeat;
+            background-size: cover;
+        }
+
+        .stat-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: #007bbf;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .booking-item {
+            padding: 1.2rem;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .booking-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-details {
+            margin-bottom: 1rem;
+        }
+
+        .booking-details p {
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-active { background: #cce5ff; color: #004085; }
+        .status-completed { background: #e2e3e5; color: #383d41; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+
+        .rating-stars {
+            color: #ffc107;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .rating-stars i:hover,
+        .rating-stars i.fas:hover ~ i.fas {
+            color: #ff9800;
+        }
+
+        .rating-display {
+            color: #ffc107;
+            font-size: 1rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            padding: 1rem;
+            border-radius: 10px;
+            color: white;
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .toast.error {
+            background: linear-gradient(45deg, #dc3545, #ff6b7a);
+        }
+
+        .toast.info {
+            background: linear-gradient(45deg, #007bff, #6c757d);
+        }
+
+        .user-welcome {
+            color: white;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(0, 123, 191, 0.95);
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .toast {
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Daanbantayan Paradise</div>
+            <ul class="nav-links">
+                <li><a href="index.html#home" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="index.html#bookingsSection" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="index.html#aboutSection" onclick="showSection('about')"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="index.html#teamSection" onclick="showSection('team')"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="index.html#contactSection" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons"></div>
+        </div>
+    </nav>
+
+    <!-- User Dashboard -->
+    <div class="dashboard" id="userDashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-user-circle"></i> Welcome, <span id="userName">Guest</span>!</h2>
+                <button class="btn btn-secondary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-number" id="activeBookings">0</div>
+                    <div class="stat-label">Active Trips</div>
+                </div>
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon"><i class="fas fa-history"></i></div>
+                    <div class="stat-number" id="totalTrips">0</div>
+                    <div class="stat-label">Total Trips</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-list"></i> Recent Bookings</h3>
+                    <div id="recentBookings">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-star"></i> Rate Your Tour Guide</h3>
+                    <div id="ratingSection">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3 class="card-title"><i class="fas fa-plus-circle"></i> New Booking</h3>
+                    <button class="btn btn-primary" onclick="startBooking()" style="width: 100%;"><i class="fas fa-calendar-plus"></i> Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRatingModal()">&times;</span>
+            <h2><i class="fas fa-star"></i> Rate Your Tour Guide</h2>
+            <div class="booking-details">
+                <p id="modalBookingRef" style="font-weight: bold;"></p>
+                <p id="modalGuideName"></p>
+            </div>
+            <div class="rating-stars" id="ratingStars">
+                <i class="far fa-star" data-rating="1"></i>
+                <i class="far fa-star" data-rating="2"></i>
+                <i class="far fa-star" data-rating="3"></i>
+                <i class="far fa-star" data-rating="4"></i>
+                <i class="far fa-star" data-rating="5"></i>
+            </div>
+            <input type="hidden" id="selectedRating" value="0">
+            <textarea id="ratingComment" placeholder="Optional: Share your experience..." rows="3" style="width: 100%; margin: 1rem 0; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+            <button class="btn btn-success" id="submitRatingBtn" onclick="submitRating()" style="width: 100%;"><i class="fas fa-paper-plane"></i> Submit Rating</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let currentUser = null;
+        let bookings = [];
+        let selectedRatingBooking = null;
+
+        // Toast function to replace alerts
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function showSection(section) {
+            window.location.href = `index.html#${section}`;
+        }
+
+        function logout() {
+            showToast('You have been logged out successfully.', 'info');
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            updateAuthButtons();
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span class="user-welcome">Welcome, ${currentUser.name}!</span>
+                    <a href="user_dashboard.html" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <button class="btn btn-primary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                `;
+                document.getElementById('userName').textContent = currentUser.name;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="index.html#login" class="btn btn-secondary" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="index.html#register" class="btn btn-primary" onclick="showRegister()"><i class="fas fa-user-plus"></i> Sign Up</a>
+                `;
+                document.getElementById('userName').textContent = 'Guest';
+            }
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Loading...</div>';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
+        }
+
+        async function loadUserBookings() {
+            if (!currentUser) return;
+            showLoading('recentBookings');
+            showLoading('ratingSection');
+            try {
+                const response = await fetch('/api/bookings', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to fetch bookings');
+                }
+                bookings = await response.json();
+
+                const activeBookings = bookings.filter(b => b.status === 'approved' || b.status === 'active').length;
+                const totalTrips = bookings.length;
+
+                document.getElementById('activeBookings').textContent = activeBookings;
+                document.getElementById('totalTrips').textContent = totalTrips;
+
+                // Render recent bookings
+                const recentBookingsEl = document.getElementById('recentBookings');
+                recentBookingsEl.innerHTML = bookings.slice(0, 5).map(booking => {
+                    const statusClass = `status-${booking.status || 'pending'}`;
+                    return `
+                        <div class="booking-item">
+                            <div class="booking-header">
+                                <strong>${booking.package || 'N/A'}</strong>
+                                <span class="status-badge ${statusClass}">${booking.status || 'pending'}</span>
+                            </div>
+                            <div class="booking-details">
+                                <p><i class="fas fa-calendar"></i> ${new Date(booking.checkin).toLocaleDateString()} - ${new Date(booking.checkout).toLocaleDateString()}</p>
+                                <p><i class="fas fa-hashtag"></i> Ref: ${booking.reference}</p>
+                                ${booking.assignedGuide ? `<p><i class="fas fa-user-tie"></i> Guide: ${booking.assignedGuide?.name || 'Assigned'}</p>` : ''}
+                                ${booking.rating ? `<p class="rating-display"><i class="fas fa-star"></i> Rated: ${booking.rating}/5</p>` : ''}
+                            </div>
+                            ${booking.status === 'completed' && !booking.rating ? `
+                                <div class="actions">
+                                    <button class="btn btn-success" onclick="openRatingModal('${booking._id}', '${booking.assignedGuide?.name || 'Guide'}', '${booking.reference}')"><i class="fas fa-star"></i> Rate Guide</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('') || '<p style="text-align: center; color: #666;"><i class="fas fa-inbox"></i> No recent bookings</p>';
+
+                // Render rating section for completed unrated bookings
+                const ratingSectionEl = document.getElementById('ratingSection');
+                const unratedBookings = bookings.filter(b => b.status === 'completed' && !b.rating && b.assignedGuide);
+                if (unratedBookings.length > 0) {
+                    ratingSectionEl.innerHTML = `
+                        <p><strong>Rate your recent tours:</strong></p>
+                        ${unratedBookings.slice(0, 3).map(booking => `
+                            <div class="booking-item">
+                                <p><strong>${booking.package}</strong> - Ref: ${booking.reference}</p>
+                                <p>Guide: ${booking.assignedGuide?.name || 'Guide'}</p>
+                                <button class="btn btn-success" onclick="openRatingModal('${booking._id}', '${booking.assignedGuide?.name || 'Guide'}', '${booking.reference}')"><i class="fas fa-star"></i> Rate Now</button>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    ratingSectionEl.innerHTML = '<p style="text-align: center; color: #666;"><i class="fas fa-thumbs-up"></i> All tours rated! Thank you for your feedback.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                showError('recentBookings', 'Failed to load bookings: ' + error.message);
+                showError('ratingSection', 'Failed to load ratings: ' + error.message);
+            }
+        }
+
+        function openRatingModal(bookingId, guideName, reference) {
+            selectedRatingBooking = { id: bookingId, guideName, reference };
+            document.getElementById('modalBookingRef').textContent = `Booking: ${reference}`;
+            document.getElementById('modalGuideName').textContent = `Guide: ${guideName}`;
+            document.getElementById('selectedRating').value = '0';
+            document.getElementById('ratingComment').value = '';
+            resetStars();
+            document.getElementById('ratingModal').style.display = 'block';
+            attachStarListeners(); // Re-attach listeners for modal
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').style.display = 'none';
+            selectedRatingBooking = null;
+        }
+
+        function resetStars() {
+            const stars = document.querySelectorAll('#ratingStars i');
+            stars.forEach(star => {
+                star.className = 'far fa-star';
+                star.style.color = '#ffc107';
+            });
+        }
+
+        function attachStarListeners() {
+            const stars = document.querySelectorAll('#ratingStars i');
+            stars.forEach(star => {
+                star.onclick = function() {
+                    const rating = parseInt(this.dataset.rating);
+                    document.getElementById('selectedRating').value = rating;
+                    stars.forEach((s, index) => {
+                        s.className = index < rating ? 'fas fa-star' : 'far fa-star';
+                    });
+                };
+                star.onmouseover = function() {
+                    const rating = parseInt(this.dataset.rating);
+                    stars.forEach((s, index) => {
+                        s.style.color = index < rating ? '#ff9800' : '#ffc107';
+                    });
+                };
+                star.onmouseout = function() {
+                    const currentRating = parseInt(document.getElementById('selectedRating').value);
+                    stars.forEach((s, index) => {
+                        s.style.color = (index < currentRating ? '#ffc107' : '#e0e0e0');
+                    });
+                };
+            });
+        }
+
+        async function submitRating() {
+            const rating = parseInt(document.getElementById('selectedRating').value);
+            if (!selectedRatingBooking || rating === 0) {
+                showToast('Please select a rating first.', 'error');
+                return;
+            }
+            const comment = document.getElementById('ratingComment').value.trim();
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/bookings/${selectedRatingBooking.id}/rate`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ rating, comment })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to submit rating');
+                showToast('Thank you! Your rating has been submitted.', 'success');
+                closeRatingModal();
+                loadUserBookings(); // Refresh
+            } catch (error) {
+                console.error('Rating submission error:', error);
+                showToast('Error submitting rating: ' + error.message, 'error');
+            }
+        }
+
+        function startBooking() {
+            window.location.href = 'booking.html';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const userStr = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('token');
+            if (!userStr || !token) {
+                showToast('Session expired. Redirecting to login.', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                if (!currentUser || !currentUser.name) {
+                    showToast('Invalid session. Redirecting to login.', 'error');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('token');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+
+                updateAuthButtons();
+                showToast(`Welcome back, ${currentUser.name}!`, 'success');
+                loadUserBookings();
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                showToast('Session error. Redirecting to login.', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+            }
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(0, 123, 191, 0.98)';
+                navbar.style.backdropFilter = 'blur(15px)';
+            } else {
+                navbar.style.background = 'linear-gradient(135deg, #007bbf, #00a8ff)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('ratingModal');
+            if (event.target == modal) {
+                closeRatingModal();
+            }
+        }
+    </script>
+</body>
+</html>

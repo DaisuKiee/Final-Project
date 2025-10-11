@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply as Tour Guide - Daanbantayan Paradise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .application-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea {
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #007bbf;
+            box-shadow: 0 0 0 3px rgba(0, 123, 191, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            text-align: left;
+            display: none;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, #1e7e34, #1b855d);
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 1rem;
+            color: #007bbf;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 2rem auto;
+            }
+
+            .application-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Apply as Tour Guide</h1>
+        <p>Become a part of our team and share the beauty of Daanbantayan with travelers. You must be a resident of Daanbantayan, Cebu City to apply.</p>
+        <form class="application-form" id="tourGuideApplicationForm" onsubmit="handleTourGuideApplication(event)">
+            <div class="form-group">
+                <label for="guideName">Full Name *</label>
+                <input type="text" id="guideName" required placeholder="Your Full Name" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="guideEmail">Email *</label>
+                <input type="email" id="guideEmail" required placeholder="Your Email" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="guidePhone">Phone Number *</label>
+                <input type="tel" id="guidePhone" required placeholder="+63 XXX XXX XXXX" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="guideAddress">Full Address *</label>
+                <textarea id="guideAddress" required placeholder="Your complete address in Daanbantayan, Cebu City" aria-required="true" rows="3"></textarea>
+                <div class="error-message" id="addressError">You must reside in Daanbantayan, Cebu City to apply.</div>
+            </div>
+            <div class="form-group">
+                <label for="guideExperience">Tour Guiding Experience *</label>
+                <textarea id="guideExperience" required placeholder="Describe your experience (e.g., years, types of tours)" aria-required="true" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="guideLanguages">Languages Spoken *</label>
+                <input type="text" id="guideLanguages" required placeholder="e.g., English, Filipino, Cebuano" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="guideCertifications">Certifications or Licenses (if any)</label>
+                <textarea id="guideCertifications" placeholder="List any relevant certifications or licenses" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="guideAvailability">Availability *</label>
+                <textarea id="guideAvailability" required placeholder="Your available dates or schedule" aria-required="true" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn">Submit Application</button>
+            <a href="index.html#tourGuideSection" class="back-link">Back to Home</a>
+        </form>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!currentUser) {
+                alert('Please login to apply as a tour guide.');
+                window.location.href = 'index.html#login';
+                return;
+            }
+        });
+
+        async function handleTourGuideApplication(e) {
+            e.preventDefault();
+            const name = document.getElementById('guideName').value;
+            const email = document.getElementById('guideEmail').value;
+            const phone = document.getElementById('guidePhone').value;
+            const address = document.getElementById('guideAddress').value.toLowerCase();
+            const experience = document.getElementById('guideExperience').value;
+            const languages = document.getElementById('guideLanguages').value;
+            const certifications = document.getElementById('guideCertifications').value;
+            const availability = document.getElementById('guideAvailability').value;
+
+            // Validate residency in Daanbantayan, Cebu City
+            if (!address.includes('daanbantayan') || !address.includes('cebu city')) {
+                document.getElementById('addressError').style.display = 'block';
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/tourguide/apply', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, email, phone, address, experience, languages, certifications, availability, status: 'pending' })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Application failed');
+                
+                alert('Your application has been submitted successfully! An admin will review it soon.');
+                window.location.href = 'index.html#tourGuideSection';
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    </script>
+</body>
+</html>
