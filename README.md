@@ -1,2 +1,2 @@
-# quakemonitoring
+# ss
 Created by Daisukie
