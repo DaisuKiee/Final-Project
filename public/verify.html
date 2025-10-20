@@ -4,99 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verification - Daanbantayan Paradise</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 500px;
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #007bbf;
-            margin-bottom: 1rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 1rem;
-            background: linear-gradient(45deg, #007bbf, #00a8ff);
-            color: white;
-            margin-top: 1rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            background: linear-gradient(45deg, #005f99, #0088dd);
-        }
-
-        .error {
-            color: #dc3545;
-        }
-
-        .success {
-            color: #28a745;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/img/dblogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/css/verify.css">
 </head>
 <body>
     <div class="container">
-        <div class="logo">Daanbantayan Paradise</div>
-        <h2>Email Verification</h2>
-        <p id="verificationMessage">Verifying your email...</p>
-        <a href="index.html" class="btn" id="continueButton" style="display: none;">Continue to Home</a>
+        <div class="logo-container">
+            <div class="logo">
+                <i class="fas fa-umbrella-beach"></i>
+                Daanbantayan Paradise
+            </div>
+            <p class="subtitle">Experience the Ultimate Island Adventure</p>
+        </div>
+
+        <div class="verification-icon" id="verificationIcon">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+
+        <h2 id="verificationTitle">Verifying Your Email</h2>
+        <p id="verificationMessage">Please wait while we verify your email address...</p>
+        
+        <div class="loading-spinner" id="loadingSpinner"></div>
+
+        <a href="/" class="btn" id="continueButton" style="display: none;">
+            <i class="fas fa-home"></i>
+            Continue to Home
+        </a>
+
+        <div class="footer-links">
+            <a href="/#home"><i class="fas fa-home"></i> Home</a>
+            <a href="/#contact"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="/#about"><i class="fas fa-info-circle"></i> About</a>
+        </div>
     </div>
 
-    <script>
-        async function verifyEmail() {
-            const token = window.location.pathname.split('/').pop();
-            try {
-                const response = await fetch(`/api/auth/verify/${token}`);
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Verification failed');
-
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('currentUser', JSON.stringify(data.user));
-                document.getElementById('verificationMessage').className = 'success';
-                document.getElementById('verificationMessage').textContent = 'Email verified successfully! Your account is now active.';
-                document.getElementById('continueButton').style.display = 'inline-block';
-            } catch (error) {
-                document.getElementById('verificationMessage').className = 'error';
-                document.getElementById('verificationMessage').textContent = error.message;
-                document.getElementById('continueButton').style.display = 'inline-block';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', verifyEmail);
-    </script>
+    <script src="/assets/js/verify.js"></script>
 </body>
 </html>

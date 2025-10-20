@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Daanbantayan Paradise</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/img/dblogo.png" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -14,205 +15,438 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            background: #f5f7fa;
             color: #333;
             overflow-x: hidden;
-            background-color: #f8f9fa;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
         }
 
-        nav {
-            background: linear-gradient(135deg, #007bbf, #00a8ff);
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
             position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .logo {
-            font-size: 1.8rem;
+        .sidebar-logo {
+            font-size: 1.4rem;
             font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .nav-links {
             display: flex;
-            list-style: none;
-            gap: 2rem;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .nav-links a {
-            color: white;
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-details h3 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-section-title {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 0.9rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: rgba(255,255,255,0.9);
             text-decoration: none;
-            transition: all 0.3s;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
         }
 
-        .nav-links a:hover {
-            color: #ffd700;
-            background: rgba(255, 255, 255, 0.1);
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #ffd700;
+        }
+
+        .menu-item.active {
+            background: rgba(255,255,255,0.15);
+            border-left-color: #ffd700;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: auto;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
             transform: translateY(-2px);
         }
 
-        .auth-buttons {
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: #f5f7fa;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
-            gap: 1rem;
+            justify-content: space-between;
             align-items: center;
         }
 
+        .top-bar h1 {
+            font-size: 1.8rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
         .btn {
-            padding: 0.6rem 1.5rem;
+            padding: 0.7rem 1.5rem;
             border: none;
-            border-radius: 25px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
             font-size: 0.9rem;
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #007bbf, #00a8ff);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #dc3545, #ff6b7a);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(45deg, #005f99, #0088dd);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
         }
 
         .btn-danger:hover {
-            background: linear-gradient(45deg, #c82333, #e63946);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(235, 51, 73, 0.4);
         }
 
-        .dashboard {
-            padding: 7rem 0 4rem;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .dashboard-header h2 {
-            color: #007bbf;
-            font-size: 2.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .dashboard-grid {
+        /* Stats Cards */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .dashboard-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .stat-card {
-            text-align: center;
-            background: linear-gradient(135deg, #007bbf, #00a8ff);
-            color: white;
-            position: relative;
-            overflow: hidden;
+            background: white;
+            padding: 1.8rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><path fill="%23ffffff" opacity="0.1" d="M0,100 Q150,50 300,100 L300,200 L0,200 Z"/></svg>') no-repeat;
-            background-size: cover;
-        }
-
-        .stat-card > * {
-            position: relative;
-            z-index: 2;
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         .stat-icon {
-            font-size: 3rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .stat-details h3 {
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
+            color: #2d3748;
+        }
+
+        .stat-details p {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #718096;
+        }
+
+        .tab:hover {
+            background: #f1f5f9;
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Item Cards */
+        .booking-item, .application-item {
+            padding: 1.2rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
             margin-bottom: 1rem;
-            opacity: 0.8;
+            background: #f8fafc;
+            transition: all 0.3s ease;
         }
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+        .booking-item:hover, .application-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+            border-color: #cbd5e0;
         }
 
-        .stat-label {
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .item-title {
             font-size: 1.1rem;
-            opacity: 0.9;
+            font-weight: 600;
+            color: #2d3748;
         }
 
-        .card-title {
-            font-size: 1.3rem;
-            color: #007bbf;
-            margin-bottom: 1.5rem;
+        .status-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-approved { background: #d1fae5; color: #065f46; }
+        .status-active { background: #dbeafe; color: #1e40af; }
+        .status-completed { background: #e0e7ff; color: #3730a3; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
+
+        .item-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .detail-item i {
+            color: #667eea;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.8rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #718096;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
         }
 
         .loading {
             text-align: center;
             padding: 2rem;
-            color: #666;
+            color: #718096;
         }
 
         .loading i {
@@ -225,248 +459,296 @@
             100% { transform: rotate(360deg); }
         }
 
-        .error {
-            text-align: center;
-            padding: 2rem;
-            color: #dc3545;
-            background: #f8d7da;
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            padding: 1rem 1.5rem;
             border-radius: 10px;
-            border: 1px solid #f5c6cb;
-        }
-
-        .booking-item, .application-item {
-            padding: 1.2rem;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .booking-item:hover, .application-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-
-        .booking-header, .application-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .booking-details, .application-details {
-            margin-bottom: 1rem;
-        }
-
-        .booking-details p, .application-details p {
-            margin-bottom: 0.3rem;
-            font-size: 0.95rem;
-        }
-
-        .status-badge {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-approved { background: #d4edda; color: #155724; }
-        .status-active { background: #cce5ff; color: #004085; }
-        .status-rejected { background: #f8d7da; color: #721c24; }
-        .status-completed { background: #e2e3e5; color: #383d41; }
-
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .user-welcome {
             color: white;
-            margin-right: 1rem;
-            font-weight: 500;
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Mobile Responsive */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(0, 123, 191, 0.95);
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
                 padding: 1rem;
             }
 
-            .nav-links.active {
-                display: flex;
+            .mobile-menu-toggle {
+                display: block;
             }
 
-            .dashboard-header {
+            .top-bar {
                 flex-direction: column;
-                text-align: center;
+                gap: 1rem;
+                align-items: flex-start;
+                padding-top: 4rem;
             }
 
-            .dashboard-grid {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .booking-header, .application-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
+            .item-details {
+                grid-template-columns: 1fr;
             }
 
-            .actions {
+            .item-actions {
                 flex-direction: column;
-                width: 100%;
             }
 
             .btn {
-                justify-content: center;
                 width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-container {
-                padding: 1rem;
+                justify-content: center;
             }
 
-            .stat-number {
-                font-size: 2rem;
-            }
-
-            .container {
-                padding: 0 10px;
+            .tabs-header {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <div class="logo">Daanbantayan Paradise</div>
-            <ul class="nav-links">
-                <li><a href="index.html#home" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="index.html#bookingsSection" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</a></li>
-                <li><a href="index.html#aboutSection" onclick="showSection('about')"><i class="fas fa-info-circle"></i> About</a></li>
-                <li><a href="index.html#teamSection" onclick="showSection('team')"><i class="fas fa-users"></i> Team</a></li>
-                <li><a href="index.html#contactSection" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a></li>
-            </ul>
-            <div class="auth-buttons" id="authButtons"></div>
-        </div>
-    </nav>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-    <!-- Admin Dashboard -->
-    <div class="dashboard" id="adminDashboard">
-        <div class="container">
-            <div class="dashboard-header">
-                <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
-                <button class="btn btn-secondary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-umbrella-beach"></i>
+                    Daanbantayan Paradise
+                </div>
+                <div class="sidebar-subtitle">Admin Control Panel</div>
             </div>
-            <div class="dashboard-grid">
-                <div class="dashboard-card stat-card">
-                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
-                    <div class="stat-number" id="totalBookings">0</div>
-                    <div class="stat-label">Total Bookings</div>
-                </div>
-                <div class="dashboard-card stat-card">
-                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                    <div class="stat-number" id="pendingBookings">0</div>
-                    <div class="stat-label">Pending Bookings</div>
-                </div>
-                <div class="dashboard-card stat-card">
-                    <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
-                    <div class="stat-number" id="totalApplications">0</div>
-                    <div class="stat-label">Total Applications</div>
-                </div>
-                <div class="dashboard-card stat-card">
-                    <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
-                    <div class="stat-number" id="pendingApplications">0</div>
-                    <div class="stat-label">Pending Applications</div>
-                </div>
-                <div class="dashboard-card">
-                    <h3 class="card-title"><i class="fas fa-list"></i> All Bookings</h3>
-                    <div id="allBookings">
-                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
-                    </div>
-                </div>
-                <div class="dashboard-card">
-                    <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> Pending Bookings</h3>
-                    <div id="pendingBookingsList">
-                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
-                    </div>
-                </div>
-                <div class="dashboard-card">
-                    <h3 class="card-title"><i class="fas fa-user-plus"></i> All Tour Guide Applications</h3>
-                    <div id="allApplications">
-                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
-                    </div>
-                </div>
-                <div class="dashboard-card">
-                    <h3 class="card-title"><i class="fas fa-user-clock"></i> Pending Tour Guide Applications</h3>
-                    <div id="pendingApplicationsList">
-                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
-                    </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-details">
+                    <h3 id="sidebarUserName">Administrator</h3>
+                    <p>System Admin</p>
                 </div>
             </div>
-        </div>
+
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">Main</div>
+                    <a href="#" class="menu-item active">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Website</div>
+                    <a href="index.html#home" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="index.html#about" class="menu-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About</span>
+                    </a>
+                    <a href="index.html#contact" class="menu-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1><i class="fas fa-crown"></i> Admin Dashboard</h1>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalBookings">0</h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="pendingBookings">0</h3>
+                        <p>Pending Bookings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalApplications">0</h3>
+                        <p>Tour Guide Applications</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="pendingApplications">0</h3>
+                        <p>Pending Applications</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab active" onclick="switchTab('allBookings')">
+                        <i class="fas fa-list"></i> All Bookings
+                    </div>
+                    <div class="tab" onclick="switchTab('pendingBookingsTab')">
+                        <i class="fas fa-exclamation-circle"></i> Pending Bookings
+                    </div>
+                </div>
+                <div id="allBookings" class="tab-content active">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading bookings...</div>
+                </div>
+                <div id="pendingBookingsTab" class="tab-content">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading pending bookings...</div>
+                </div>
+            </div>
+
+            <!-- Applications Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab active" onclick="switchTab('allApplications')">
+                        <i class="fas fa-users"></i> All Applications
+                    </div>
+                    <div class="tab" onclick="switchTab('pendingApplicationsTab')">
+                        <i class="fas fa-user-clock"></i> Pending Applications
+                    </div>
+                </div>
+                <div id="allApplications" class="tab-content active">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading applications...</div>
+                </div>
+                <div id="pendingApplicationsTab" class="tab-content">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading pending applications...</div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
     <script>
         let currentUser = null;
-        let isLoading = true;
         let bookings = [];
         let applications = [];
 
-        function showSection(section) {
-            window.location.href = `index.html#${section}`;
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${message}</span>`;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
         }
 
         function logout() {
-            currentUser = null;
+            showToast('Logging out...', 'info');
             localStorage.removeItem('currentUser');
             localStorage.removeItem('token');
-            updateAuthButtons();
-            window.location.href = 'index.html';
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
         }
 
-        function updateAuthButtons() {
-            const authButtons = document.getElementById('authButtons');
-            if (currentUser) {
-                authButtons.innerHTML = `
-                    <span class="user-welcome">Welcome, ${currentUser.name}!</span>
-                    <a href="admin_dashboard.html" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    <button class="btn btn-primary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                `;
-            } else {
-                authButtons.innerHTML = `
-                    <a href="index.html#login" class="btn btn-secondary" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Login</a>
-                    <a href="index.html#register" class="btn btn-primary" onclick="showRegister()"><i class="fas fa-user-plus"></i> Sign Up</a>
-                `;
-            }
-        }
-
-        function showLoading(elementId) {
-            document.getElementById(elementId).innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Loading...</div>';
-        }
-
-        function showError(elementId, message) {
-            document.getElementById(elementId).innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
+        function switchTab(tabId) {
+            const parentTabs = event.target.closest('.tabs-container');
+            const tabs = parentTabs.querySelectorAll('.tab');
+            const contents = parentTabs.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
 
         async function loadAdminData() {
             if (!currentUser) return;
-            isLoading = true;
-            showLoading('allBookings');
-            showLoading('pendingBookingsList');
-            showLoading('allApplications');
-            showLoading('pendingApplicationsList');
+            
             try {
                 const token = localStorage.getItem('token');
                 if (!token) throw new Error('No token found');
@@ -475,23 +757,28 @@
                 const bookingsResponse = await fetch('/api/bookings/all', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                
                 if (!bookingsResponse.ok) {
                     const errorData = await bookingsResponse.json();
                     throw new Error(errorData.error || 'Failed to fetch bookings');
                 }
+                
                 bookings = await bookingsResponse.json();
 
                 // Fetch applications
                 const appsResponse = await fetch('/api/tourguide/applications', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                
                 if (!appsResponse.ok) {
                     const errorData = await appsResponse.json();
                     throw new Error(errorData.error || 'Failed to fetch applications');
                 }
+                
                 const appsData = await appsResponse.json();
                 applications = appsData.applications;
 
+                // Update stats
                 const totalBookings = bookings.length;
                 const pendingBookings = bookings.filter(b => b.status === 'pending').length;
                 const totalApplications = applications.length;
@@ -502,183 +789,327 @@
                 document.getElementById('totalApplications').textContent = totalApplications;
                 document.getElementById('pendingApplications').textContent = pendingApplications;
 
-                // Render all bookings
-                const allBookingsEl = document.getElementById('allBookings');
-                allBookingsEl.innerHTML = bookings.length > 0 ? bookings.map(booking => {
+                renderBookings();
+                renderApplications();
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showToast('Failed to load data: ' + error.message, 'error');
+            }
+        }
+
+        function renderBookings() {
+            // All bookings
+            const allBookingsEl = document.getElementById('allBookings');
+            if (bookings.length === 0) {
+                allBookingsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No bookings available</p>
+                    </div>
+                `;
+            } else {
+                allBookingsEl.innerHTML = bookings.map(booking => {
                     const statusClass = `status-${booking.status || 'pending'}`;
                     return `
                         <div class="booking-item">
-                            <div class="booking-header">
-                                <strong>${booking.package || 'N/A'}</strong>
+                            <div class="item-header">
+                                <span class="item-title">${booking.package || 'N/A'}</span>
                                 <span class="status-badge ${statusClass}">${booking.status || 'pending'}</span>
                             </div>
-                            <div class="booking-details">
-                                <p><i class="fas fa-user"></i> ${booking.user?.name || 'Unknown User'}</p>
-                                <p><i class="fas fa-hashtag"></i> Ref: ${booking.reference}</p>
-                                <p><i class="fas fa-calendar"></i> ${new Date(booking.checkin).toLocaleDateString()} - ${new Date(booking.checkout).toLocaleDateString()}</p>
+                            <div class="item-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>${booking.user?.name || 'Unknown User'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-hashtag"></i>
+                                    <span>${booking.reference}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${new Date(booking.checkin).toLocaleDateString()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>${new Date(booking.checkout).toLocaleDateString()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>${booking.guests || 'N/A'} Guests</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₱${(booking.totalAmount || 0).toLocaleString()}</span>
+                                </div>
                             </div>
                             ${booking.status === 'pending' ? `
-                                <div class="actions">
-                                    <button class="btn btn-primary" onclick="approveBooking('${booking._id}')"><i class="fas fa-check"></i> Approve</button>
-                                    <button class="btn btn-danger" onclick="rejectBooking('${booking._id}')"><i class="fas fa-times"></i> Reject</button>
+                                <div class="item-actions">
+                                    <button class="btn btn-success" onclick="approveBooking('${booking._id}')" style="flex: 1;">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-danger" onclick="rejectBooking('${booking._id}')" style="flex: 1;">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
                                 </div>
                             ` : ''}
                         </div>
                     `;
-                }).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-inbox"></i> No bookings available</p>';
+                }).join('');
+            }
 
-                // Render pending bookings
-                const pendingBookingsEl = document.getElementById('pendingBookingsList');
-                const pendingBookingsList = bookings.filter(b => b.status === 'pending');
-                pendingBookingsEl.innerHTML = pendingBookingsList.length > 0 ? pendingBookingsList.map(booking => `
+            // Pending bookings
+            const pendingBookingsEl = document.getElementById('pendingBookingsTab');
+            const pendingBookingsList = bookings.filter(b => b.status === 'pending');
+            
+            if (pendingBookingsList.length === 0) {
+                pendingBookingsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No pending bookings</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">All bookings have been processed</p>
+                    </div>
+                `;
+            } else {
+                pendingBookingsEl.innerHTML = pendingBookingsList.map(booking => `
                     <div class="booking-item">
-                        <div class="booking-header">
-                            <strong>${booking.package || 'N/A'}</strong>
+                        <div class="item-header">
+                            <span class="item-title">${booking.package || 'N/A'}</span>
                             <span class="status-badge status-pending">Pending</span>
                         </div>
-                        <div class="booking-details">
-                            <p><i class="fas fa-user"></i> ${booking.user?.name || 'Unknown User'}</p>
-                            <p><i class="fas fa-id-card"></i> ID: ${booking.idNumber || 'N/A'}</p>
-                            <p><i class="fas fa-phone"></i> Contact: ${booking.contactNumber || booking.user?.phone || 'N/A'}</p>
+                        <div class="item-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>${booking.user?.name || 'Unknown User'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${booking.user?.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-id-card"></i>
+                                <span>ID: ${booking.idNumber || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${booking.contactNumber || booking.user?.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${new Date(booking.checkin).toLocaleDateString()}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>${new Date(booking.checkout).toLocaleDateString()}</span>
+                            </div>
                         </div>
-                        <div class="actions">
-                            <button class="btn btn-primary" onclick="approveBooking('${booking._id}')"><i class="fas fa-check"></i> Approve</button>
-                            <button class="btn btn-danger" onclick="rejectBooking('${booking._id}')"><i class="fas fa-times"></i> Reject</button>
+                        <div class="item-actions">
+                            <button class="btn btn-success" onclick="approveBooking('${booking._id}')" style="flex: 1;">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectBooking('${booking._id}')" style="flex: 1;">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
                         </div>
                     </div>
-                `).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-check-circle"></i> No pending bookings</p>';
+                `).join('');
+            }
+        }
 
-                // Render all applications
-                const allApplicationsEl = document.getElementById('allApplications');
-                allApplicationsEl.innerHTML = applications.length > 0 ? applications.map(application => {
+        function renderApplications() {
+            // All applications
+            const allApplicationsEl = document.getElementById('allApplications');
+            if (applications.length === 0) {
+                allApplicationsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No applications available</p>
+                    </div>
+                `;
+            } else {
+                allApplicationsEl.innerHTML = applications.map(application => {
                     const statusClass = `status-${application.status || 'pending'}`;
                     return `
                         <div class="application-item">
-                            <div class="application-header">
-                                <strong>${application.name || 'N/A'}</strong>
+                            <div class="item-header">
+                                <span class="item-title">${application.name || 'N/A'}</span>
                                 <span class="status-badge ${statusClass}">${application.status || 'pending'}</span>
                             </div>
-                            <div class="application-details">
-                                <p><i class="fas fa-user"></i> ${application.user?.name || 'Unknown User'}</p>
-                                <p><i class="fas fa-envelope"></i> ${application.user?.email || 'N/A'}</p>
-                                <p><i class="fas fa-phone"></i> ${application.phone || 'N/A'}</p>
-                                <p><i class="fas fa-map-marker-alt"></i> ${application.address}</p>
-                                <p><i class="fas fa-language"></i> Languages: ${application.languages}</p>
-                                <p><i class="fas fa-clock"></i> Applied: ${new Date(application.createdAt).toLocaleDateString()}</p>
+                            <div class="item-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>${application.user?.name || 'Unknown User'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${application.user?.email || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>${application.phone || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${application.address || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>${application.languages || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${new Date(application.createdAt).toLocaleDateString()}</span>
+                                </div>
                             </div>
                             ${application.status === 'pending' ? `
-                                <div class="actions">
-                                    <button class="btn btn-primary" onclick="approveApplication('${application._id}')"><i class="fas fa-check"></i> Approve</button>
-                                    <button class="btn btn-danger" onclick="rejectApplication('${application._id}')"><i class="fas fa-times"></i> Reject</button>
+                                <div class="item-actions">
+                                    <button class="btn btn-success" onclick="approveApplication('${application._id}')" style="flex: 1;">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-danger" onclick="rejectApplication('${application._id}')" style="flex: 1;">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
                                 </div>
                             ` : ''}
                         </div>
                     `;
-                }).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-inbox"></i> No applications available</p>';
+                }).join('');
+            }
 
-                // Render pending applications
-                const pendingApplicationsEl = document.getElementById('pendingApplicationsList');
-                const pendingAppsList = applications.filter(a => a.status === 'pending');
-                pendingApplicationsEl.innerHTML = pendingAppsList.length > 0 ? pendingAppsList.map(application => `
+            // Pending applications
+            const pendingApplicationsEl = document.getElementById('pendingApplicationsTab');
+            const pendingAppsList = applications.filter(a => a.status === 'pending');
+            
+            if (pendingAppsList.length === 0) {
+                pendingApplicationsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No pending applications</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">All applications have been reviewed</p>
+                    </div>
+                `;
+            } else {
+                pendingApplicationsEl.innerHTML = pendingAppsList.map(application => `
                     <div class="application-item">
-                        <div class="application-header">
-                            <strong>${application.name || 'N/A'}</strong>
+                        <div class="item-header">
+                            <span class="item-title">${application.name || 'N/A'}</span>
                             <span class="status-badge status-pending">Pending</span>
                         </div>
-                        <div class="application-details">
-                            <p><i class="fas fa-user"></i> ${application.user?.name || 'Unknown User'}</p>
-                            <p><i class="fas fa-envelope"></i> ${application.user?.email || 'N/A'}</p>
-                            <p><i class="fas fa-phone"></i> ${application.phone || 'N/A'}</p>
-                            <p><i class="fas fa-map-marker-alt"></i> ${application.address}</p>
-                            <p><i class="fas fa-language"></i> Languages: ${application.languages}</p>
+                        <div class="item-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>${application.user?.name || 'Unknown User'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${application.user?.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${application.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${application.address || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>${application.experience || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                <span>${application.languages || 'N/A'}</span>
+                            </div>
                         </div>
-                        <div class="actions">
-                            <button class="btn btn-primary" onclick="approveApplication('${application._id}')"><i class="fas fa-check"></i> Approve</button>
-                            <button class="btn btn-danger" onclick="rejectApplication('${application._id}')"><i class="fas fa-times"></i> Reject</button>
+                        <div class="item-actions">
+                            <button class="btn btn-success" onclick="approveApplication('${application._id}')" style="flex: 1;">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectApplication('${application._id}')" style="flex: 1;">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
                         </div>
                     </div>
-                `).join('') : '<p style="text-align: center; color: #666;"><i class="fas fa-check-circle"></i> No pending applications</p>';
-
-                isLoading = false;
-            } catch (error) {
-                console.error('Error loading admin data:', error);
-                showError('allBookings', 'Failed to load bookings: ' + error.message);
-                showError('pendingBookingsList', 'Failed to load pending bookings: ' + error.message);
-                showError('allApplications', 'Failed to load applications: ' + error.message);
-                showError('pendingApplicationsList', 'Failed to load pending applications: ' + error.message);
-                isLoading = false;
+                `).join('');
             }
         }
 
         async function approveBooking(bookingId) {
-            if (confirm('Are you sure you want to approve this booking?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`/api/bookings/${bookingId}/approve`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || 'Failed to approve booking');
-                    alert('Booking approved successfully!');
-                    loadAdminData();
-                } catch (error) {
-                    alert('Error approving booking: ' + error.message);
-                }
+            if (!confirm('Are you sure you want to approve this booking?')) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/bookings/${bookingId}/approve`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to approve booking');
+                
+                showToast('Booking approved successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
         async function rejectBooking(bookingId) {
-            if (confirm('Are you sure you want to reject this booking?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`/api/bookings/${bookingId}/reject`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || 'Failed to reject booking');
-                    alert('Booking rejected successfully!');
-                    loadAdminData();
-                } catch (error) {
-                    alert('Error rejecting booking: ' + error.message);
-                }
+            if (!confirm('Are you sure you want to reject this booking?')) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/bookings/${bookingId}/reject`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to reject booking');
+                
+                showToast('Booking rejected successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
         async function approveApplication(applicationId) {
-            if (confirm('Are you sure you want to approve this application? This will grant tour guide access.')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`/api/tourguide/applications/${applicationId}/approve`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || 'Failed to approve application');
-                    alert('Application approved successfully!');
-                    loadAdminData();
-                } catch (error) {
-                    alert('Error approving application: ' + error.message);
-                }
+            if (!confirm('Are you sure you want to approve this application? This will grant tour guide access.')) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/tourguide/applications/${applicationId}/approve`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to approve application');
+                
+                showToast('Application approved successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
         async function rejectApplication(applicationId) {
-            if (confirm('Are you sure you want to reject this application?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`/api/tourguide/applications/${applicationId}/reject`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || 'Failed to reject application');
-                    alert('Application rejected successfully!');
-                    loadAdminData();
-                } catch (error) {
-                    alert('Error rejecting application: ' + error.message);
-                }
+            if (!confirm('Are you sure you want to reject this application?')) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/tourguide/applications/${applicationId}/reject`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to reject application');
+                
+                showToast('Application rejected successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
@@ -686,48 +1117,39 @@
         document.addEventListener('DOMContentLoaded', function() {
             const userStr = localStorage.getItem('currentUser');
             const token = localStorage.getItem('token');
+            
             if (!userStr || !token) {
-                alert('Session expired. Please login again.');
-                window.location.href = 'index.html';
+                showToast('Please login to continue', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
                 return;
             }
 
             try {
                 currentUser = JSON.parse(userStr);
-                // Validate user data structure
+                
                 if (!currentUser || !currentUser.name || !currentUser.role) {
-                    alert('Invalid session data. Please login again.');
-                    // Clear invalid data
+                    showToast('Invalid session data', 'error');
                     localStorage.removeItem('currentUser');
                     localStorage.removeItem('token');
-                    window.location.href = 'index.html';
+                    setTimeout(() => window.location.href = 'index.html', 2000);
                     return;
                 }
 
                 if (currentUser.role !== 'admin') {
-                    alert('Admin access required');
-                    window.location.href = 'index.html#login';
+                    showToast('Admin access required', 'error');
+                    setTimeout(() => window.location.href = 'index.html#login', 2000);
                     return;
                 }
 
-                updateAuthButtons();
+                document.getElementById('sidebarUserName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                showToast(`Welcome back, ${currentUser.name}!`, 'success');
                 loadAdminData();
             } catch (error) {
                 console.error('Error parsing user data:', error);
-                alert('Session error. Please login again.');
-                window.location.href = 'index.html';
-            }
-        });
-
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(0, 123, 191, 0.98)';
-                navbar.style.backdropFilter = 'blur(15px)';
-            } else {
-                navbar.style.background = 'linear-gradient(135deg, #007bbf, #00a8ff)';
-                navbar.style.backdropFilter = 'blur(10px)';
+                showToast('Session error. Please login again.', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
             }
         });
     </script>

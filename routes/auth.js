@@ -114,7 +114,7 @@ router.post('/forgot-password', async (req, res) => {
       `
     });
 
-    res.json({ message: 'Password reset link sent to your email. Please wait for 1-2 minutes' });
+    res.json({ message: 'Password reset link sent to your email, Please wait for 1-2 minutes' });
   } catch (error) {
     console.error('Forgot password error:', error);
     res.status(400).json({ error: error.message || 'Failed to send reset link' });
@@ -145,6 +145,5 @@ router.post('/reset-password', async (req, res) => {
     res.status(400).json({ error: error.message || 'Failed to reset password' });
   }
 });
-
 
 module.exports = router;

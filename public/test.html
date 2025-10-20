@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daanbantayan Paradise - Tourist Booking Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            overflow-x: hidden;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Enhanced Navigation */
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        nav.scrolled {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-tour-guide {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><circle cx="200" cy="200" r="150" fill="%23ffffff" opacity="0.05"/><circle cx="900" cy="600" r="200" fill="%23ffffff" opacity="0.05"/><circle cx="600" cy="400" r="100" fill="%23ffffff" opacity="0.05"/></svg>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><path fill="%23ffffff" opacity="0.03" d="M0,400 Q300,200 600,400 T1200,400 L1200,800 L0,800 Z"/></svg>');
+            background-size: cover;
+            animation: wave 15s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.3);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease 0.3s both;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            animation: fadeInUp 1s ease 0.6s both;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-buttons .btn {
+            padding: 1.2rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 4rem 0;
+            background: #f5f7fa;
+        }
+
+        .search-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin-top: -5rem;
+            position: relative;
+            z-index: 100;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Available Bookings */
+        .bookings-section {
+            padding: 4rem 0;
+            background: white;
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .booking-image {
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .booking-content {
+            padding: 2rem;
+        }
+
+        .booking-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #2d3748;
+        }
+
+        .booking-description {
+            color: #718096;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .booking-price {
+            color: #667eea;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Map Section */
+        .map-section {
+            padding: 4rem 0;
+            background: #f5f7fa;
+        }
+
+        #map {
+            height: 500px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+
+        .map-controls {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 4rem 0;
+            background: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        .about-image {
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 4rem 0;
+            background: #f5f7fa;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            overflow: hidden;
+        }
+
+        .team-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-card h3 {
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .team-card p:first-of-type {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 4rem 0;
+            background: white;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .contact-info h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #718096;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #2d3748;
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        /* Toast Notification */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-umbrella-beach"></i>
+                Daanbantayan Paradise
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#bookingsSection"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="#aboutSection"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="#teamSection"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="#contactSection"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <a href="#" class="btn btn-secondary" onclick="showLogin()">Login</a>
+                <a href="#" class="btn btn-primary" onclick="showRegister()">Sign Up</a>
+                <a href="apply.html" class="btn btn-tour-guide">Apply as Tour Guide</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Discover Daanbantayan Paradise</h1>
+                <p>Experience pristine beaches, crystal clear waters, and unforgettable adventures in Northern Cebu's tropical paradise</p>
+                <div class="hero-buttons">
+                    <a href="#bookingsSection" class="btn btn-primary">Book Your Adventure</a>
+                    <a href="#aboutSection" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <h2 class="section-title">Find Your Perfect Experience</h2>
+                <form class="search-form">
+                    <div class="form-group">
+                        <label>Destination</label>
+                        <select id="destination">
+                            <option value="">All Destinations</option>
+                            <option>Malapascua Island</option>
+                            <option>Bantigue Cove</option>
+                            <option>Carnaza Island</option>
+                            <option>Paypay Beach</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-in</label>
+                        <input type="date" id="checkin">
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out</label>
+                        <input type="date" id="checkout">
+                    </div>
+                    <div class="form-group">
+                        <label>Guests</label>
+                        <select id="guests">
+                            <option>1 Guest</option>
+                            <option>2 Guests</option>
+                            <option>3-4 Guests</option>
+                            <option>5+ Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="searchBookings()">
+                            <i class="fas fa-search"></i> Search Adventures
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Why Choose Us</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <div class="stat-number">6+</div>
+                    <div class="stat-label">Tourist Spots</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Happy Tourists</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-number">4.9</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Expert Guides</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Available Bookings -->
+    <section class="bookings-section" id="bookingsSection">
+        <div class="container">
+            <h2 class="section-title">Available Experiences</h2>
+            <div class="booking-grid" id="bookingGrid">
+                <!-- Bookings will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section" id="mapSection">
+        <div class="container">
+            <h2 class="section-title">Explore Daanbantayan</h2>
+            <div id="map"></div>
+            <div class="map-controls">
+                <button class="btn btn-primary" onclick="getUserLocation()">
+                    <i class="fas fa-location-arrow"></i> Show My Location
+                </button>
+                <button class="btn btn-secondary" onclick="resetMapView()">
+                    <i class="fas fa-sync-alt"></i> Reset View
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="aboutSection">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Daanbantayan</h2>
+                    <p>Daanbantayan is a pristine municipality located in the northern tip of Cebu, Philippines. Known for its stunning white sand beaches, crystal-clear waters, and world-class diving spots, it's home to the famous Malapascua Island.</p>
+                    <p>Our platform connects travelers with the best accommodations, activities, and experiences that Daanbantayan has to offer. From luxury resorts to budget-friendly guesthouses, diving adventures to island hopping tours, we make it easy to plan your perfect getaway.</p>
+                    <p>Experience the thresher sharks at sunrise, relax on powdery white beaches, and immerse yourself in the warm Filipino hospitality that makes Daanbantayan truly special.</p>
+                </div>
+                <div class="about-image">
+                    <img src="img/db.jpg" alt="Daanbantayan Paradise">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section" id="teamSection">
+        <div class="container">
+            <h2 class="section-title">Our Team</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                <div class="team-avatar"><img src="img/Daisu.jpg" alt="Vincent Bernebe V. Romeo"></div>
+                    <h3>Vincent Bernebe V. Romeo</h3>
+                    <p>Developer</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar"><img src="img/Daisu.jpg" alt="Jovannie Congson"></div>
+                    <h3>Jovannie Congson</h3>
+                    <p>Operations Manager</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar"><img src="img/Daisu.jpg" alt="Bea Delos Santos"></div>
+                    <h3>Bea Delos Santos</h3>
+                    <p>Tour Coordinator</p>
+                </div>=
+                <div class="team-card">
+                    <div class="team-avatar"><img src="img/Daisu.jpg" alt="Christine Rosalejos"></div>
+                    <h3>Christine Rosalejos</h3>
+                    <p>Customer Support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contactSection">
+        <div class="container">
+            <h2 class="section-title">Get in Touch</h2>
+            <div class="contact-content">
+                <form class="contact-form" onsubmit="handleContactForm(event)">
+                    <div class="form-group">
+                        <label for="contactName">Your Name</label>
+                        <input type="text" id="contactName" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Your Email</label>
+                        <input type="email" id="contactEmail" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactSubject">Subject</label>
+                        <input type="text" id="contactSubject" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMessage">Your Message</label>
+                        <textarea id="contactMessage" rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <p><strong>Address:</strong> Brgy. Agujo, Daanbantayan, Cebu, Philippines</p>
+                    <p><strong>Phone:</strong> +639945935023</p>
+                    <p><strong>Email:</strong> info@daanbantayanparadise.com</p>
+                    <p><strong>Hours:</strong> 24/7</p>
+                    <h4 style="margin-top: 2rem;">Follow Us</h4>
+                    <p>
+                        <a href="#" style="color: white; text-decoration: none;">Facebook</a> |
+                        <a href="#" style="color: white; text-decoration: none;">Instagram</a> |
+                        <a href="#" style="color: white; text-decoration: none;">Twitter</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Your Email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Your Password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Don't have an account? <a href="#" onclick="closeModal('loginModal'); showRegister();" style="color: #667eea;">Sign up</a>
+                | <a href="#" onclick="showForgotPassword();" style="color: #667eea;">Forgot Password?</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('forgotPasswordModal')">&times;</span>
+            <h2>Forgot Password</h2>
+            <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <input type="email" id="forgotEmail" required placeholder="Your Email">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-envelope"></i> Send Reset Link
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                <a href="#" onclick="closeModal('forgotPasswordModal'); showLogin();" style="color: #667eea;">Back to Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required placeholder="Your Full Name">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required placeholder="Your Email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number (Optional)</label>
+                    <input type="tel" id="registerPhone" placeholder="+63 XXX XXX XXXX">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required placeholder="Your Password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required placeholder="Confirm Password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Already have an account? <a href="#" onclick="closeModal('registerModal'); showLogin();" style="color: #667eea;">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Application State
+        let currentUser = null;
+        let map = null;
+        let userMarker = null;
+        let touristMarkers = [];
+
+        // Toast Notification Function
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            toast.offsetHeight;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (container.contains(toast)) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Tourist Spots with Coordinates
+        const touristSpots = [
+            {
+                id: 1,
+                name: "Malapascua Island",
+                lat: 11.3333,
+                lng: 124.1167,
+                description: "Famous for thresher shark diving and pristine white sand beaches.",
+                price: 4500,
+                image: "img/resort/malapascua.jpg"
+            },
+            {
+                id: 2,
+                name: "Bantigue Cove",
+                lat: 11.2800,
+                lng: 124.0200,
+                description: "Secluded cove with turquoise waters perfect for swimming.",
+                price: 2800,
+                image: "img/resort/bantigue.jpg"
+            },
+            {
+                id: 3,
+                name: "Carnaza Island",
+                lat: 11.4167,
+                lng: 124.0333,
+                description: "Remote island paradise with untouched beaches.",
+                price: 3200,
+                image: "img/resort/carnaza-island-cebu-boracay.jpg"
+            },
+            {
+                id: 4,
+                name: "Paypay Beach",
+                lat: 11.2600,
+                lng: 124.0100,
+                description: "White sand beach ideal for sunset watching.",
+                price: 2000,
+                image: "img/resort/paypay.webp"
+            },
+            {
+                id: 5,
+                name: "Monad Shoal",
+                lat: 11.3500,
+                lng: 124.1300,
+                description: "World-renowned dive site for thresher sharks.",
+                price: 5500,
+                image: "img/resort/thresher-shark.jpg"
+            },
+            {
+                id: 6,
+                name: "Daanbantayan Lighthouse",
+                lat: 11.2517,
+                lng: 123.9992,
+                description: "Historic lighthouse with panoramic views.",
+                price: 1500,
+                image: "img/resort/lighthouse.jpg"
+            }
+        ];
+
+        // Bookings
+        const bookings = [
+            {
+                id: 1,
+                title: "Malapascua Island Resort",
+                description: "Luxury beachfront accommodation with diving packages and pristine white sand beaches",
+                price: 4500,
+                image: "img/resort/malapascua.jpg",
+                location: "Malapascua Island"
+            },
+            {
+                id: 2,
+                title: "Bantigue Cove Experience",
+                description: "Secluded cove with crystal clear waters perfect for snorkeling and relaxation",
+                price: 2800,
+                image: "img/resort/bantigue.jpg",
+                location: "Bantigue Cove"
+            },
+            {
+                id: 3,
+                title: "Carnaza Island Adventure",
+                description: "Island hopping with local guides, fresh seafood, and cultural experiences",
+                price: 3200,
+                image: "img/resort/carnaza-island-cebu-boracay.jpg",
+                location: "Carnaza Island"
+            },
+            {
+                id: 4,
+                title: "Paypay Beach Getaway",
+                description: "White sand beach perfect for relaxation, swimming, and sunset watching",
+                price: 2000,
+                image: "img/resort/paypay.webp",
+                location: "Paypay Beach"
+            },
+            {
+                id: 5,
+                title: "Thresher Shark Diving",
+                description: "World-famous diving experience with thresher sharks at Monad Shoal",
+                price: 5500,
+                image: "img/resort/thresher-shark.jpg",
+                location: "Monad Shoal"
+            },
+            {
+                id: 6,
+                title: "Lighthouse Heritage Tour",
+                description: "Historical lighthouse with panoramic views and cultural significance",
+                price: 1500,
+                image: "img/resort/lighthouse.jpg",
+                location: "Daanbantayan Lighthouse"
+            }
+        ];
+
+        function loadBookings(filteredBookings = bookings) {
+            const bookingGrid = document.getElementById('bookingGrid');
+            bookingGrid.innerHTML = filteredBookings.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-image">
+                        <img src="${booking.image}" alt="${booking.title}" onerror="this.src='img/placeholder.jpg';">
+                    </div>
+                    <div class="booking-content">
+                        <div class="booking-title">${booking.title}</div>
+                        <p class="booking-description">${booking.description}</p>
+                        <div class="booking-price">₱${booking.price.toLocaleString()}/night</div>
+                        <button class="btn btn-primary" onclick="selectBooking(${booking.id})" style="width: 100%;">
+                            <i class="fas fa-calendar-check"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkinDate = document.getElementById('checkin');
+            const checkoutDate = document.getElementById('checkout');
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            if (checkinDate) checkinDate.valueAsDate = today;
+            if (checkoutDate) checkoutDate.valueAsDate = tomorrow;
+
+            currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+            updateAuthButtons();
+            loadBookings();
+            initLeafletMap();
+        });
+
+        // Initialize Leaflet Map
+        function initLeafletMap() {
+            try {
+                const daanbantayanCenter = [11.2517, 123.9992];
+                map = L.map('map').setView(daanbantayanCenter, 11);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 18
+                }).addTo(map);
+
+                const touristIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 40px; height: 40px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                        <span style="transform: rotate(45deg); font-size: 20px;">📍</span>
+                    </div>`,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40],
+                    popupAnchor: [0, -40]
+                });
+
+                touristSpots.forEach(spot => {
+                    const marker = L.marker([spot.lat, spot.lng], { icon: touristIcon }).addTo(map);
+                    const popupContent = `
+                        <div style="padding: 0;">
+                            <img src="${spot.image}" alt="${spot.name}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px 10px 0 0;" onerror="this.src='img/placeholder.jpg';">
+                            <div style="padding: 1rem;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #667eea; margin-bottom: 0.5rem;">${spot.name}</div>
+                                <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.8rem; line-height: 1.4;">${spot.description}</div>
+                                <div style="font-size: 1.3rem; font-weight: bold; color: #11998e; margin-bottom: 0.8rem;">₱${spot.price.toLocaleString()}/night</div>
+                                <button onclick="selectBooking(${spot.id})" style="width: 100%; padding: 0.6rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Book Now</button>
+                            </div>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent, { maxWidth: 280 });
+                    touristMarkers.push(marker);
+                });
+            } catch (error) {
+                console.error('Map init error:', error);
+            }
+        }
+
+        // Get User Location
+        function getUserLocation() {
+            if (!navigator.geolocation) {
+                showToast('Geolocation is not supported by your browser', 'error');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    if (userMarker) map.removeLayer(userMarker);
+
+                    const userIcon = L.divIcon({
+                        className: 'user-location-icon',
+                        html: `<div style="background: #4285f4; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+
+                    userMarker = L.marker([userLat, userLng], { icon: userIcon })
+                        .addTo(map)
+                        .bindPopup('<strong>You are here!</strong>')
+                        .openPopup();
+
+                    map.setView([userLat, userLng], 13);
+
+                    L.circle([userLat, userLng], {
+                        radius: position.coords.accuracy,
+                        color: '#4285f4',
+                        fillColor: '#4285f4',
+                        fillOpacity: 0.1,
+                        weight: 1
+                    }).addTo(map);
+
+                    showToast('Location found!', 'success');
+                },
+                function(error) {
+                    let errorMessage = 'Unable to retrieve your location. ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage += 'Please allow location access.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage += 'Location information unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage += 'Request timed out.';
+                            break;
+                    }
+                    showToast(errorMessage, 'error');
+                }
+            );
+        }
+
+        // Reset Map View
+        function resetMapView() {
+            const daanbantayanCenter = [11.2517, 123.9992];
+            map.setView(daanbantayanCenter, 11);
+            if (userMarker) {
+                map.removeLayer(userMarker);
+                userMarker = null;
+            }
+        }
+
+        // Authentication Functions
+        function showLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function showRegister() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        function showForgotPassword() {
+            closeModal('loginModal');
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Login failed');
+                
+                currentUser = data.user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('token', data.token);
+                closeModal('loginModal');
+                window.location.href = currentUser.role === 'admin' ? 'admin_dashboard.html' : (currentUser.role === 'tourguide' ? 'tour_guide.html' : 'user_dashboard.html');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+
+            try {
+                const response = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to send reset link');
+                showToast(data.message, 'success');
+                closeModal('forgotPasswordModal');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, phone })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Registration failed');
+
+                showToast(data.message || 'Registration successful! Please check your email.', 'success');
+                closeModal('registerModal');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+         async function handleContactForm(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            try {
+                const response = await fetch('/api/contact/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, subject, message })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+
+                showToast(data.message || 'Message sent successfully!', 'success');
+                e.target.reset();
+            } catch (error) {
+                showToast(error.message || 'Failed to send message. Please try again.', 'error');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            updateAuthButtons();
+            showToast('Logged out successfully', 'success');
+        }
+
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span style="color: white; font-weight: 500;">Welcome, ${currentUser.name}!</span>
+                    <a href="${currentUser.role === 'admin' ? 'admin_dashboard.html' : (currentUser.role === 'tourguide' ? 'tour_guide.html' : 'user_dashboard.html')}" class="btn btn-secondary">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <button class="btn btn-primary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="#" class="btn btn-secondary" onclick="showLogin()">Login</a>
+                    <a href="#" class="btn btn-primary" onclick="showRegister()">Sign Up</a>
+                    <a href="apply.html" class="btn btn-tour-guide">Apply as Tour Guide</a>
+                `;
+            }
+        }
+
+        // Booking Functions
+        function searchBookings() {
+            const destination = document.getElementById('destination').value.toLowerCase();
+            const filteredBookings = bookings.filter(booking => 
+                !destination || booking.location.toLowerCase().includes(destination)
+            );
+            loadBookings(filteredBookings);
+            document.getElementById('bookingsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function selectBooking(bookingId) {
+            if (!currentUser) {
+                showToast('Please login to make a booking', 'error');
+                showLogin();
+                return;
+            }
+            const selectedBooking = bookings.find(b => b.id === bookingId);
+            localStorage.setItem('selectedBooking', JSON.stringify(selectedBooking));
+            window.location.href = 'booking.html';
+        }
+
+
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+            }
+        });
+    </script>
+</body>
+</html>
+                    

@@ -5,6 +5,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const bookingRoutes = require('./routes/bookings');
 const tourGuideRoutes = require('./routes/tourguide');
+const contactRoutes = require('./routes/contact');
 const path = require('path');
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.static('public'));
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/tourguide', tourGuideRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Serve verify.html for email verification
 app.get('/verify/:token', (req, res) => {
@@ -33,6 +35,26 @@ app.get('/reset-password', (req, res) => {
 // Serve index.html for root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin_dashboard.html'));
+});
+
+app.get('/booking', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'booking.html'));
+});
+
+app.get('/apply', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'apply.html'));
+});
+
+app.get('/tour-guide', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'tour_guide.html'));
+});
+
+app.get('/user-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'user_dashboard.html'));
 });
 
 // MongoDB Connection
