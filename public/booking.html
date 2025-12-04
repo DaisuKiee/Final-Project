@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Adventure - Daanbantayan Paradise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff',
+                            300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7',
+                            600: '#9333ea', 700: '#7e22ce', 800: '#6b21a8',
+                            900: '#581c87', 950: '#3b0764',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/img/dblogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/css/tailwind-theme.css">
+    <link rel="stylesheet" href="/assets/css/preloader.css">
+    <link rel="stylesheet" href="/assets/css/booking.css">
+    <style>
+        /* Page-specific styles only */
+        body {
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #e2e8f0;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Main Container */
+        .booking-container {
+            padding: 6rem 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 6rem);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .breadcrumb {
+            background: #1e293b;
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .breadcrumb i.fa-chevron-right {
+            color: #cbd5e0;
+            font-size: 0.75rem;
+        }
+
+        .breadcrumb span {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        body.dark .breadcrumb span {
+            color: #94a3b8;
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .progress-tracker {
+            background: #1e293b;
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: #e5e7eb;
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 24px;
+            left: 5%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            z-index: 1;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-weight: bold;
+            color: #cbd5e0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .progress-step.active .step-circle {
+            border-color: #667eea;
+            color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed .step-circle {
+            border-color: #11998e;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .step-label {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .progress-step.completed .step-label {
+            color: #11998e;
+            font-weight: 600;
+        }
+
+        /* Booking Layout */
+        .booking-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        /* Main Form */
+        .booking-form-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .booking-form-section {
+            background: #1e293b;
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f4ff;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .section-header {
+            border-bottom-color: #334155;
+        }
+
+        .section-header h2 {
+            font-size: 1.875rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .section-header h2 {
+            color: #f1f5f9;
+        }
+
+        .section-header h2 i {
+            color: #667eea;
+            font-size: 1.75rem;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .section-header p {
+            color: #94a3b8;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.625rem;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9375rem;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .form-group label {
+            color: #e2e8f0;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        body.dark .form-group input,
+        body.dark .form-group select,
+        body.dark .form-group textarea {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group .input-icon {
+            position: relative;
+        }
+
+        .form-group .input-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #cbd5e0;
+        }
+
+        .form-group .input-icon input,
+        .form-group .input-icon select {
+            padding-left: 3rem;
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8fafc;
+        }
+
+        body.dark .file-upload {
+            background: #0f172a;
+            border-color: #475569;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: translateY(-2px);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload-content {
+            color: #64748b;
+        }
+
+        .file-upload-content i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .file-upload-content p {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .file-upload-content p {
+            color: #e2e8f0;
+        }
+
+        .file-upload-content small {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .file-name {
+            margin-top: 1rem;
+            color: #11998e;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Sidebar Summary */
+        .booking-summary {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: sticky;
+            top: 6rem;
+            height: fit-content;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .booking-summary {
+            background: #1e293b;
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+
+        .summary-header {
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f4ff;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .summary-header {
+            border-bottom-color: #334155;
+        }
+
+        .summary-header h3 {
+            font-size: 1.375rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .summary-header h3 {
+            color: #f1f5f9;
+        }
+
+        .summary-header h3 i {
+            color: #667eea;
+        }
+
+        .package-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.75rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+        }
+
+        .package-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+
+        .package-card .price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin: 0.75rem 0;
+            letter-spacing: -0.5px;
+        }
+
+        .package-card .price-label {
+            font-size: 0.875rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f0f4ff;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .summary-item {
+            border-bottom-color: #334155;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item label {
+            color: #64748b;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .summary-item span {
+            color: #1e293b;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .summary-item span {
+            color: #e2e8f0;
+        }
+
+        body.dark .summary-item label {
+            color: #94a3b8;
+        }
+
+        .summary-total {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            padding: 1.75rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            border: 2px solid rgba(102, 126, 234, 0.15);
+        }
+
+        .summary-total .total-label {
+            font-size: 1rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.875rem;
+        }
+
+        .summary-total .total-amount {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #667eea;
+            letter-spacing: -1px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f0f4ff;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .form-actions {
+            border-top-color: #334155;
+        }
+
+        .btn-back {
+            background: #e5e7eb;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .btn-back:hover:not(:disabled) {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-method {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        body.dark .payment-method {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        body.dark .payment-method:hover {
+            background: #1e293b;
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .payment-method.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 24px;
+            height: 24px;
+            background: #11998e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .payment-method input[type="radio"] {
+            display: none;
+        }
+
+        .payment-method i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            color: #667eea;
+            display: block;
+        }
+
+        .payment-method label {
+            font-weight: 600;
+            cursor: pointer;
+            color: #1e293b;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        body.dark .payment-method label {
+            color: #e2e8f0;
+        }
+
+        /* Confirmation */
+        .confirmation-section {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confirmation-details {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .confirmation-details {
+            background: #0f172a;
+        }
+
+        .confirmation-details .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .confirmation-details .detail-row {
+            border-bottom-color: #334155;
+        }
+
+        .confirmation-details .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .booking-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-nav-container {
+                padding: 0;
+            }
+
+            .booking-container {
+                padding: 5rem 1rem 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-steps {
+                flex-wrap: wrap;
+            }
+
+            .progress-step {
+                flex: 0 0 50%;
+                margin-bottom: 1rem;
+            }
+
+            .progress-steps::before,
+            .progress-bar {
+                display: none;
+            }
+
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Preloader -->
+    <div id="pagePreloader" class="page-preloader">
+        <div class="preloader-logo">
+            <i class="fas fa-umbrella-beach"></i>
+        </div>
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Loading Booking Form<span class="loading-dots"></span></div>
+    </div>
+
+    <!-- Immediate Preloader Script -->
+    <script>
+        (function() {
+            var maxWaitTime = 1500;
+            var preloaderHidden = false;
+            
+            function hidePreloader() {
+                if (preloaderHidden) return;
+                preloaderHidden = true;
+                
+                var preloader = document.getElementById('pagePreloader');
+                if (preloader) {
+                    preloader.classList.add('hidden');
+                    setTimeout(function() {
+                        if (preloader.parentNode) {
+                            preloader.remove();
+                        }
+                    }, 500);
+                }
+            }
+            
+            window.addEventListener('load', hidePreloader);
+            setTimeout(hidePreloader, maxWaitTime);
+        })();
+    </script>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-container">
+            <div class="logo">
+                <i class="fas fa-umbrella-beach"></i>
+                Daanbantayan Paradise
+            </div>
+            <div class="nav-actions">
+                <button onclick="toggleTheme()" class="btn btn-light" style="padding: 0.875rem 1rem;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <a href="index.html" class="btn btn-light">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="user_dashboard.html" class="btn btn-light">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="booking-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="index.html#bookings">Bookings</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>New Booking</span>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="progress-tracker">
+            <div class="progress-steps">
+                <div class="progress-bar" id="progressBar" style="width: 25%;"></div>
+                <div class="progress-step active" data-step="1">
+                    <div class="step-circle">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="step-label">Details</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-circle">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="step-label">Verification</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-circle">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Layout -->
+        <div class="booking-layout">
+            <!-- Main Form Section -->
+            <div class="booking-form-section">
+                <!-- Step 1: Details -->
+                <div class="form-step active" id="step1">
+                    <div class="section-header">
+                        <h2><i class="fas fa-calendar-alt"></i> Booking Details</h2>
+                        <p>Select your travel dates and number of guests</p>
+                    </div>
+                    <form id="detailsForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Check-in Date <span class="required">*</span></label>
+                                <div class="input-icon">
+                                    <i class="fas fa-calendar"></i>
+                                    <input type="date" id="checkin" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Check-out Date <span class="required">*</span></label>
+                                <div class="input-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <input type="date" id="checkout" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Guests <span class="required">*</span></label>
+                            <select id="guests" required>
+                                <option value="">Select number of guests</option>
+                                <option value="1">1 Guest</option>
+                                <option value="2">2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests</option>
+                                <option value="5">5+ Guests</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-success" onclick="nextStep(1)" style="flex: 1;">
+                                Continue <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Verification -->
+                <div class="form-step" id="step2">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user-check"></i> Identity Verification</h2>
+                        <p>We need to verify your identity for security purposes</p>
+                    </div>
+                    <form id="verificationForm">
+                        <div class="form-group">
+                            <label>Government ID <span class="required">*</span></label>
+                            <div class="file-upload" onclick="document.getElementById('governmentId').click()">
+                                <input type="file" id="governmentId" accept="image/*,.pdf" required>
+                                <div class="file-upload-content">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload your ID</p>
+                                    <small>Supported formats: JPG, PNG, PDF</small>
+                                </div>
+                                <div class="file-name" id="fileName"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>ID Number <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-hashtag"></i>
+                                <input type="text" id="idNumber" placeholder="Enter your ID number" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="contactNumber" placeholder="+63 XXX XXX XXXX" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-back" onclick="prevStep(2)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="nextStep(2)" style="flex: 1;">
+                                Continue <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Payment -->
+                <div class="form-step" id="step3">
+                    <div class="section-header">
+                        <h2><i class="fas fa-wallet"></i> Payment Method</h2>
+                        <p>Choose your preferred payment method</p>
+                    </div>
+                    <form id="paymentForm">
+                        <div class="form-group">
+                            <label>Select Payment Method <span class="required">*</span></label>
+                            <div class="payment-methods">
+                                <div class="payment-method" onclick="selectPayment('credit')">
+                                    <input type="radio" name="paymentMethod" id="credit" value="credit">
+                                    <i class="fas fa-credit-card"></i>
+                                    <label for="credit">Credit Card</label>
+                                </div>
+                                <div class="payment-method" onclick="selectPayment('debit')">
+                                    <input type="radio" name="paymentMethod" id="debit" value="debit">
+                                    <i class="fas fa-wallet"></i>
+                                    <label for="debit">Debit Card</label>
+                                </div>
+                                <div class="payment-method" onclick="selectPayment('gcash')">
+                                    <input type="radio" name="paymentMethod" id="gcash" value="gcash">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <label for="gcash">GCash</label>
+                                </div>
+                                <div class="payment-method" onclick="selectPayment('paypal')">
+                                    <input type="radio" name="paymentMethod" id="paypal" value="paypal">
+                                    <i class="fab fa-paypal"></i>
+                                    <label for="paypal">PayPal</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Special Requests (Optional)</label>
+                            <textarea id="specialRequests" rows="4" placeholder="Any special requests or requirements?"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-back" onclick="prevStep(3)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="confirmBooking()" id="confirmBtn" style="flex: 1;">
+                                <i class="fas fa-check-circle"></i> Confirm Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div class="form-step" id="step4">
+                    <div class="confirmation-section">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2 style="color: #2d3748; margin-bottom: 1rem;">Booking Confirmed!</h2>
+                        <p style="color: #718096; margin-bottom: 2rem;">Your booking has been successfully processed</p>
+                        
+                        <div class="confirmation-details" id="confirmationDetails"></div>
+                        
+                        <div class="form-actions" style="border-top: none; padding-top: 0;">
+                            <a href="user_dashboard.html" class="btn btn-primary" style="flex: 1;">
+                                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                            </a>
+                            <a href="index.html" class="btn btn-back" style="flex: 1;">
+                                <i class="fas fa-home"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Summary Sidebar -->
+            <aside class="booking-summary">
+                <div class="summary-header">
+                    <h3><i class="fas fa-file-invoice"></i> Booking Summary</h3>
+                </div>
+                
+                <div class="package-card" id="packageInfo">
+                    <h4>Loading...</h4>
+                    <div class="price">₱0</div>
+                    <div class="price-label">per night</div>
+                </div>
+
+                <div class="summary-item">
+                    <label>Check-in:</label>
+                    <span id="summaryCheckin">-</span>
+                </div>
+                <div class="summary-item">
+                    <label>Check-out:</label>
+                    <span id="summaryCheckout">-</span>
+                </div>
+                <div class="summary-item">
+                    <label>Guests:</label>
+                    <span id="summaryGuests">-</span>
+                </div>
+                <div class="summary-item">
+                    <label>Nights:</label>
+                    <span id="summaryNights">-</span>
+                </div>
+
+                <div class="summary-total">
+                    <div class="total-label">Total Amount</div>
+                    <div class="total-amount" id="totalAmount">₱0</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let currentUser = null;
+        let selectedBooking = null;
+        let currentStep = 1;
+        let bookingData = {};
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${message}</span>`;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateProgressBar(step) {
+            const progressBar = document.getElementById('progressBar');
+            const steps = document.querySelectorAll('.progress-step');
+            const width = (step / 4) * 100;
+            progressBar.style.width = width + '%';
+
+            steps.forEach((s, index) => {
+                s.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    s.classList.add('completed');
+                } else if (index + 1 === step) {
+                    s.classList.add('active');
+                }
+            });
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+            updateProgressBar(step);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateSummary() {
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+            const guests = document.getElementById('guests').value;
+
+            if (checkin) {
+                document.getElementById('summaryCheckin').textContent = new Date(checkin).toLocaleDateString();
+                bookingData.checkin = checkin;
+            }
+            if (checkout) {
+                document.getElementById('summaryCheckout').textContent = new Date(checkout).toLocaleDateString();
+                bookingData.checkout = checkout;
+            }
+            if (guests) {
+                document.getElementById('summaryGuests').textContent = guests + ' Guest' + (guests > 1 ? 's' : '');
+                bookingData.guests = parseInt(guests);
+            }
+
+            if (checkin && checkout && selectedBooking) {
+                const checkinDate = new Date(checkin + 'T00:00:00');
+                const checkoutDate = new Date(checkout + 'T00:00:00');
+                const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                
+                if (nights > 0) {
+                    document.getElementById('summaryNights').textContent = nights + ' Night' + (nights > 1 ? 's' : '');
+                    const total = selectedBooking.price * nights;
+                    document.getElementById('totalAmount').textContent = '₱' + total.toLocaleString();
+                    bookingData.totalAmount = total;
+                    bookingData.nights = nights;
+                } else {
+                    document.getElementById('summaryNights').textContent = '-';
+                    document.getElementById('totalAmount').textContent = '₱0';
+                }
+            }
+        }
+
+        function nextStep(step) {
+            if (step === 1) {
+                const checkin = document.getElementById('checkin').value;
+                const checkout = document.getElementById('checkout').value;
+                const guests = document.getElementById('guests').value;
+
+                if (!checkin || !checkout || !guests) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                const checkinDate = new Date(checkin + 'T00:00:00');
+                const checkoutDate = new Date(checkout + 'T00:00:00');
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (checkinDate < today) {
+                    showToast('Check-in date cannot be in the past', 'error');
+                    return;
+                }
+
+                if (checkoutDate <= checkinDate) {
+                    showToast('Check-out date must be after check-in date', 'error');
+                    return;
+                }
+
+                const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                if (nights < 1) {
+                    showToast('Booking must be at least 1 night', 'error');
+                    return;
+                }
+
+                updateSummary();
+                showStep(2);
+            } else if (step === 2) {
+                const idFile = document.getElementById('governmentId').files[0];
+                const idNumber = document.getElementById('idNumber').value;
+                const contactNumber = document.getElementById('contactNumber').value;
+
+                if (!idFile || !idNumber || !contactNumber) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                bookingData.governmentId = idFile.name;
+                bookingData.idNumber = idNumber;
+                bookingData.contactNumber = contactNumber;
+                
+                showStep(3);
+            }
+        }
+
+        function prevStep(step) {
+            showStep(step - 1);
+        }
+
+        function selectPayment(method) {
+            document.querySelectorAll('.payment-method').forEach(pm => pm.classList.remove('selected'));
+            document.querySelector(`.payment-method input[value="${method}"]`).closest('.payment-method').classList.add('selected');
+            document.getElementById(method).checked = true;
+            bookingData.paymentMethod = method;
+        }
+
+        async function confirmBooking() {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            
+            if (!paymentMethod) {
+                showToast('Please select a payment method', 'error');
+                return;
+            }
+
+            const specialRequests = document.getElementById('specialRequests').value;
+            bookingData.paymentMethod = paymentMethod.value;
+            bookingData.specialRequests = specialRequests;
+
+            const confirmBtn = document.getElementById('confirmBtn');
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        package: selectedBooking.title,
+                        checkin: bookingData.checkin,
+                        checkout: bookingData.checkout,
+                        guests: bookingData.guests,
+                        totalAmount: bookingData.totalAmount,
+                        paymentMethod: bookingData.paymentMethod,
+                        specialRequests: bookingData.specialRequests,
+                        governmentId: bookingData.governmentId,
+                        idNumber: bookingData.idNumber,
+                        contactNumber: bookingData.contactNumber
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Booking failed');
+                }
+
+                bookingData.reference = data.reference;
+                bookingData.status = data.status || 'pending';
+
+                document.getElementById('confirmationDetails').innerHTML = `
+                    <div class="detail-row">
+                        <label><i class="fas fa-hashtag"></i> Booking Reference</label>
+                        <span style="color: #667eea; font-weight: bold;">${data.reference}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label><i class="fas fa-box"></i> Package</label>
+                        <span>${selectedBooking.title}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label><i class="fas fa-calendar"></i> Check-in</label>
+                        <span>${new Date(bookingData.checkin).toLocaleDateString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label><i class="fas fa-calendar-check"></i> Check-out</label>
+                        <span>${new Date(bookingData.checkout).toLocaleDateString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label><i class="fas fa-users"></i> Guests</label>
+                        <span>${bookingData.guests} Guest${bookingData.guests > 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label><i class="fas fa-moon"></i> Nights</label>
+                        <span>${bookingData.nights} Night${bookingData.nights > 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="detail-row" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%); margin: 1rem -1rem; padding: 1rem 2rem; border-radius: 8px;">
+                        <label style="font-size: 1.1rem; color: #667eea;"><i class="fas fa-money-bill-wave"></i> Total Amount</label>
+                        <span style="font-size: 1.5rem; font-weight: bold; color: #667eea;">₱${bookingData.totalAmount.toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label><i class="fas fa-info-circle"></i> Status</label>
+                        <span style="color: #f59e0b; font-weight: 600; text-transform: uppercase;">${bookingData.status}</span>
+                    </div>
+                `;
+
+                showToast('Booking confirmed successfully!', 'success');
+                showStep(4);
+            } catch (error) {
+                console.error('Booking error:', error);
+                showToast('Error: ' + error.message, 'error');
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            }
+        }
+
+        // File upload handler
+        document.getElementById('governmentId').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                document.getElementById('fileName').textContent = '✓ ' + fileName;
+            }
+        });
+
+        // Real-time summary updates
+        document.getElementById('checkin').addEventListener('change', updateSummary);
+        document.getElementById('checkout').addEventListener('change', updateSummary);
+        document.getElementById('guests').addEventListener('change', updateSummary);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const userStr = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('token');
+            
+            if (!userStr || !token) {
+                showToast('Please login to make a booking', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                selectedBooking = JSON.parse(localStorage.getItem('selectedBooking'));
+
+                if (!currentUser) {
+                    showToast('Invalid session', 'error');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+
+                if (!selectedBooking) {
+                    showToast('No booking selected. Please select a package first.', 'error');
+                    setTimeout(() => window.location.href = 'index.html#bookings', 2000);
+                    return;
+                }
+
+                // Populate package info
+                document.getElementById('packageInfo').innerHTML = `
+                    <h4>${selectedBooking.title}</h4>
+                    <div class="price">₱${selectedBooking.price.toLocaleString()}</div>
+                    <div class="price-label">per night</div>
+                `;
+
+                // Set minimum dates
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const dayAfterTomorrow = new Date(today);
+                dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+                
+                const checkinInput = document.getElementById('checkin');
+                const checkoutInput = document.getElementById('checkout');
+                
+                checkinInput.min = today.toISOString().split('T')[0];
+                checkoutInput.min = tomorrow.toISOString().split('T')[0];
+                
+                // Set default dates to tomorrow and day after
+                checkinInput.value = tomorrow.toISOString().split('T')[0];
+                checkoutInput.value = dayAfterTomorrow.toISOString().split('T')[0];
+
+                updateSummary();
+                showToast('Welcome! Let\'s book your adventure!', 'success');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showToast('Session error', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+            }
+        });
+
+        // Update checkout min date when checkin changes
+        document.getElementById('checkin').addEventListener('change', function() {
+            const checkinDate = new Date(this.value + 'T00:00:00');
+            const minCheckout = new Date(checkinDate);
+            minCheckout.setDate(minCheckout.getDate() + 1);
+            document.getElementById('checkout').min = minCheckout.toISOString().split('T')[0];
+            
+            const currentCheckout = new Date(document.getElementById('checkout').value + 'T00:00:00');
+            if (currentCheckout <= checkinDate) {
+                document.getElementById('checkout').value = minCheckout.toISOString().split('T')[0];
+            }
+            updateSummary();
+        });
+
+        // Theme Toggle Function
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme on page load
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+                if (themeIcon) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+            } else {
+                if (themeIcon) {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            }
+        })();
+    </script>
+
+    <!-- Theme Management Script -->
+    <script src="/assets/js/theme.js"></script>
+</body>
+</html>

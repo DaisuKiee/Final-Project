@@ -1,0 +1,34 @@
+/* Tailwind Theme Styles - Include in all pages */
+
+/* Theme transition animation */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.theme-ripple {
+    animation: ripple 0.8s ease-out;
+}
+
+/* Smooth color transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Prevent transition on page load */
+.no-transition * {
+    transition: none !important;
+}
+
+/* Tailwind-like utility classes for non-Tailwind pages */
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.pointer-events-none { pointer-events: none; }
+.z-\[9999\] { z-index: 9999; }
+.z-\[9998\] { z-index: 9998; }

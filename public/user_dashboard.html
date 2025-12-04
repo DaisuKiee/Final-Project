@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Daanbantayan Paradise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff',
+                            300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7',
+                            600: '#9333ea', 700: '#7e22ce', 800: '#6b21a8',
+                            900: '#581c87', 950: '#3b0764',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/img/dblogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/css/tailwind-theme.css">
+    <link rel="stylesheet" href="/assets/css/preloader.css">
+    <link rel="stylesheet" href="/assets/css/user.css">
+    <link rel="stylesheet" href="/assets/css/chat.css">
+    <style>
+        /* Additional User Dashboard Specific Styles */
+        
+        /* Content Cards */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .dark .content-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .content-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .dark .card-header {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .card-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .card-body::-webkit-scrollbar-track {
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .dark .card-body::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .card-body::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            border-radius: 10px;
+        }
+
+        .booking-item {
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            margin-bottom: 1.25rem;
+            background: #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .dark .booking-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .booking-item:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            border-color: #10b981;
+        }
+
+        .dark .booking-item:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border-color: #059669;
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dark .booking-header {
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        .booking-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e293b;
+            transition: color 0.3s ease;
+        }
+
+        .dark .booking-title {
+            color: #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-pending { 
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+        .status-approved { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .status-active { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+        .status-completed { 
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+        .status-rejected { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .booking-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #475569;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .dark .booking-detail-item {
+            color: #cbd5e1;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .booking-detail-item i {
+            color: #10b981;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .dark .booking-actions {
+            border-top-color: rgba(255,255,255,0.1);
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .rating-display {
+            color: #fbbf24;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .dark .empty-state {
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.25;
+            color: #10b981;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideDown 0.3s ease;
+            transition: background-color 0.3s ease;
+        }
+
+        .dark .modal-content {
+            background: #1f2937;
+            color: #f9fafb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .dark .modal-header h2 {
+            color: #f9fafb;
+        }
+
+        .close {
+            font-size: 1.8rem;
+            color: #718096;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #2d3748;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            font-size: 2rem;
+        }
+
+        .rating-stars i {
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rating-stars i:hover {
+            color: #fbbf24;
+            transform: scale(1.2);
+        }
+
+        .rating-stars i.fas {
+            color: #fbbf24;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            background: white;
+            color: #111827;
+        }
+
+        .dark textarea {
+            background: #111827;
+            color: #f9fafb;
+            border-color: #374151;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            min-width: 320px;
+            padding: 1.25rem 1.75rem;
+            border-radius: 16px;
+            color: white;
+            z-index: 3000;
+            transform: translateX(450px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 1.5rem;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-details {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .scroll-to-top {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Preloader -->
+    <div id="pagePreloader" class="page-preloader">
+        <div class="preloader-logo">
+            <i class="fas fa-umbrella-beach"></i>
+        </div>
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Loading Dashboard<span class="loading-dots"></span></div>
+    </div>
+
+    <!-- Immediate Preloader Script -->
+    <script>
+        (function() {
+            var maxWaitTime = 1500;
+            var preloaderHidden = false;
+            
+            function hidePreloader() {
+                if (preloaderHidden) return;
+                preloaderHidden = true;
+                
+                var preloader = document.getElementById('pagePreloader');
+                if (preloader) {
+                    preloader.classList.add('hidden');
+                    setTimeout(function() {
+                        if (preloader.parentNode) {
+                            preloader.remove();
+                        }
+                    }, 500);
+                }
+            }
+            
+            window.addEventListener('load', hidePreloader);
+            setTimeout(hidePreloader, maxWaitTime);
+        })();
+    </script>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-umbrella-beach"></i>
+                    Daanbantayan Paradise
+                </div>
+                <div class="sidebar-subtitle">User Dashboard</div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-details">
+                    <h3 id="sidebarUserName">Guest</h3>
+                    <p>Tourist</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">Main</div>
+                    <a href="#" class="menu-item active" onclick="showDashboard()">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showMyBookings()">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>My Bookings</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="viewUserProfile()">
+                        <i class="fas fa-user-circle"></i>
+                        <span>My Profile</span>
+                    </a>
+                    <a href="booking.html" class="menu-item">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>New Booking</span>
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Website</div>
+                    <a href="index.html#home" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="index.html#about" class="menu-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About</span>
+                    </a>
+                    <a href="index.html#contact" class="menu-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button onclick="toggleTheme(event)" class="logout-btn" style="margin-bottom: 1rem;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                    <span>Toggle Theme</span>
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1><i class="fas fa-user-circle"></i> Dashboard Overview</h1>
+                <div class="top-bar-actions">
+                    <a href="booking.html" class="btn btn-primary">
+                        <i class="fas fa-calendar-plus"></i>
+                        New Booking
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="activeBookings">0</h3>
+                        <p>Active Bookings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="completedTrips">0</h3>
+                        <p>Completed Trips</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="pendingBookings">0</h3>
+                        <p>Pending Bookings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalTrips">0</h3>
+                        <p>Total Trips</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Cards -->
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-list"></i> Recent Bookings</h3>
+                    </div>
+                    <div class="card-body" id="recentBookings">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading bookings...</div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-star"></i> Rate Your Experience</h3>
+                    </div>
+                    <div class="card-body" id="ratingSection">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading ratings...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-star"></i> Rate Your Tour Guide</h2>
+                <span class="close" onclick="closeRatingModal()">&times;</span>
+            </div>
+            <div class="booking-details" style="grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                <p id="modalBookingRef" style="font-weight: bold; font-size: 1.1rem;"></p>
+                <p id="modalGuideName" style="color: #718096;"></p>
+            </div>
+            <div class="rating-stars" id="ratingStars">
+                <i class="far fa-star" data-rating="1"></i>
+                <i class="far fa-star" data-rating="2"></i>
+                <i class="far fa-star" data-rating="3"></i>
+                <i class="far fa-star" data-rating="4"></i>
+                <i class="far fa-star" data-rating="5"></i>
+            </div>
+            <input type="hidden" id="selectedRating" value="0">
+            <textarea id="ratingComment" placeholder="Share your experience with us..." rows="4"></textarea>
+            <button class="btn btn-success" onclick="submitRating()" style="width: 100%; margin-top: 1rem;">
+                <i class="fas fa-paper-plane"></i> Submit Rating
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Chat Modal -->
+    <div id="chatModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-0 sm:p-4">
+        <div class="bg-[#1e2a3a] w-full h-full sm:max-w-md sm:h-[700px] sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="bg-[#2c3e50] px-4 py-3 flex items-center justify-between border-b border-gray-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-lg shadow-lg overflow-hidden" id="chatPartnerAvatarContainer">
+                        <img id="chatPartnerAvatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                        <span id="chatPartnerInitials">TG</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white text-lg" id="chatPartnerName">Tour Guide</h3>
+                        <p class="text-xs text-gray-400">Booking #<span id="chatBookingRef"></span></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button onclick="refreshMessages()" id="refreshMessagesBtn" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all refresh-btn" title="Refresh Messages">
+                        <i class="fas fa-sync-alt text-lg"></i>
+                    </button>
+                    <button onclick="viewGuideInfo()" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" title="View Guide Info">
+                        <i class="fas fa-info-circle text-lg"></i>
+                    </button>
+                    <button onclick="closeChatModal()" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 bg-[#1a2332]">
+                <!-- Messages will be inserted here -->
+            </div>
+
+            <!-- File Preview -->
+            <div id="filePreview" class="hidden px-4 py-2 bg-[#2c3e50] border-t border-gray-700/50">
+                <div id="filePreviewContent" class="flex items-center gap-3"></div>
+            </div>
+
+            <!-- Emoji Picker -->
+            <div id="emojiPicker" class="hidden px-4 py-3 bg-[#2c3e50] border-t border-gray-700/50">
+                <div class="grid grid-cols-10 gap-2">
+                    <button type="button" onclick="insertEmoji('😊')" class="text-2xl hover:scale-125 transition-transform">😊</button>
+                    <button type="button" onclick="insertEmoji('😂')" class="text-2xl hover:scale-125 transition-transform">😂</button>
+                    <button type="button" onclick="insertEmoji('❤️')" class="text-2xl hover:scale-125 transition-transform">❤️</button>
+                    <button type="button" onclick="insertEmoji('👍')" class="text-2xl hover:scale-125 transition-transform">👍</button>
+                    <button type="button" onclick="insertEmoji('🙏')" class="text-2xl hover:scale-125 transition-transform">🙏</button>
+                    <button type="button" onclick="insertEmoji('😍')" class="text-2xl hover:scale-125 transition-transform">😍</button>
+                    <button type="button" onclick="insertEmoji('🎉')" class="text-2xl hover:scale-125 transition-transform">🎉</button>
+                    <button type="button" onclick="insertEmoji('🔥')" class="text-2xl hover:scale-125 transition-transform">🔥</button>
+                    <button type="button" onclick="insertEmoji('✨')" class="text-2xl hover:scale-125 transition-transform">✨</button>
+                    <button type="button" onclick="insertEmoji('💯')" class="text-2xl hover:scale-125 transition-transform">💯</button>
+                    <button type="button" onclick="insertEmoji('😎')" class="text-2xl hover:scale-125 transition-transform">😎</button>
+                    <button type="button" onclick="insertEmoji('🤔')" class="text-2xl hover:scale-125 transition-transform">🤔</button>
+                    <button type="button" onclick="insertEmoji('😢')" class="text-2xl hover:scale-125 transition-transform">😢</button>
+                    <button type="button" onclick="insertEmoji('😅')" class="text-2xl hover:scale-125 transition-transform">😅</button>
+                    <button type="button" onclick="insertEmoji('🥰')" class="text-2xl hover:scale-125 transition-transform">🥰</button>
+                    <button type="button" onclick="insertEmoji('👏')" class="text-2xl hover:scale-125 transition-transform">👏</button>
+                    <button type="button" onclick="insertEmoji('🙌')" class="text-2xl hover:scale-125 transition-transform">🙌</button>
+                    <button type="button" onclick="insertEmoji('💪')" class="text-2xl hover:scale-125 transition-transform">💪</button>
+                    <button type="button" onclick="insertEmoji('🌟')" class="text-2xl hover:scale-125 transition-transform">🌟</button>
+                    <button type="button" onclick="insertEmoji('⭐')" class="text-2xl hover:scale-125 transition-transform">⭐</button>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 bg-[#2c3e50] border-t border-gray-700/50">
+                <form onsubmit="sendMessage(event)">
+                    <div class="flex gap-2 items-center">
+                        <!-- File Input (Hidden) -->
+                        <input type="file" id="fileInput" class="hidden" accept="image/*,.pdf,.doc,.docx,.txt,.zip" onchange="handleFileSelect(event)">
+                        
+                        <!-- Emoji Button -->
+                        <button type="button" onclick="toggleEmojiPicker()" class="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all">
+                            <i class="fas fa-smile text-xl"></i>
+                        </button>
+                        
+                        <!-- File Upload Button -->
+                        <button type="button" onclick="triggerFileInput()" class="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all">
+                            <i class="fas fa-paperclip text-xl"></i>
+                        </button>
+                        
+                        <!-- Message Input -->
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            placeholder="Type a message..." 
+                            class="flex-1 px-4 py-3 rounded-full bg-[#1a2332] border border-gray-700/50 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all outline-none"
+                            autocomplete="off"
+                        >
+                        
+                        <!-- Send Button -->
+                        <button type="submit" class="p-3 bg-gradient-to-br from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full transition-all duration-200 shadow-lg hover:shadow-purple-500/50">
+                            <i class="fas fa-paper-plane text-lg"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guide Info Modal -->
+    <div id="guideInfoModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-user-tie text-purple-600"></i>
+                    Tour Guide Information
+                </h2>
+                <button onclick="closeGuideInfoModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div id="guideInfoContent" class="p-6 space-y-4">
+                <!-- Loading state -->
+                <div class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-4xl text-purple-600"></i>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">Loading guide information...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="userProfileModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-user-circle text-purple-600"></i>
+                    My Profile
+                </h2>
+                <button onclick="closeUserProfileModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl transition-colors">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+                <!-- Profile Picture Section -->
+                <div class="flex flex-col items-center mb-8">
+                    <div class="relative group">
+                        <div id="userProfilePicturePreview" class="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg overflow-hidden">
+                            <img id="userProfileImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                            <span id="userProfileInitials">U</span>
+                        </div>
+                        <label for="userProfilePictureInput" class="absolute bottom-0 right-0 bg-purple-600 hover:bg-purple-700 text-white rounded-full p-3 cursor-pointer shadow-lg transition-all duration-200 hover:scale-110">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" id="userProfilePictureInput" accept="image/*" class="hidden" onchange="handleUserProfilePictureUpload(event)">
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-3">Click camera icon to upload photo</p>
+                    <button onclick="removeUserProfilePicture()" class="mt-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors">
+                        <i class="fas fa-trash-alt mr-1"></i> Remove Photo
+                    </button>
+                </div>
+
+                <!-- Profile Form -->
+                <form id="userProfileForm" onsubmit="updateUserProfile(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-user text-purple-600"></i> Full Name
+                            </label>
+                            <input type="text" id="userProfileName" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-envelope text-purple-600"></i> Email
+                            </label>
+                            <input type="email" id="userProfileEmail" readonly class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white cursor-not-allowed">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-phone text-purple-600"></i> Phone Number
+                        </label>
+                        <input type="tel" id="userProfilePhone" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-info-circle text-purple-600"></i> Bio
+                        </label>
+                        <textarea id="userProfileBio" rows="4" placeholder="Tell us about yourself..." class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all"></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3 pt-4">
+                        <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-save mr-2"></i> Save Changes
+                        </button>
+                        <button type="button" onclick="closeUserProfileModal()" class="px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let bookings = [];
+        let selectedRatingBooking = null;
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${message}</span>`;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Scroll to Top Functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/Hide Scroll to Top Button
+        window.addEventListener('scroll', function() {
+            const scrollButton = document.getElementById('scrollToTop');
+            if (scrollButton && window.pageYOffset > 300) {
+                scrollButton.classList.add('visible');
+            } else if (scrollButton) {
+                scrollButton.classList.remove('visible');
+            }
+        });
+
+        function logout() {
+            showToast('Logging out...', 'info');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        async function loadUserBookings() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch('/api/bookings', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to fetch bookings');
+                }
+                
+                bookings = await response.json();
+
+                const activeBookings = bookings.filter(b => b.status === 'approved' || b.status === 'active').length;
+                const completedBookings = bookings.filter(b => b.status === 'completed').length;
+                const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+                const totalTrips = bookings.length;
+
+                document.getElementById('activeBookings').textContent = activeBookings;
+                document.getElementById('completedTrips').textContent = completedBookings;
+                document.getElementById('pendingBookings').textContent = pendingBookings;
+                document.getElementById('totalTrips').textContent = totalTrips;
+
+                renderRecentBookings();
+                renderRatingSection();
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                document.getElementById('recentBookings').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load bookings</p></div>`;
+                document.getElementById('ratingSection').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load ratings</p></div>`;
+            }
+        }
+
+        function renderRecentBookings() {
+            const recentBookingsEl = document.getElementById('recentBookings');
+            
+            if (bookings.length === 0) {
+                recentBookingsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No bookings yet</p>
+                        <a href="booking.html" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-plus-circle"></i> Create Your First Booking
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            recentBookingsEl.innerHTML = bookings.slice(0, 5).map(booking => {
+                const statusClass = `status-${booking.status || 'pending'}`;
+                return `
+                    <div class="booking-item">
+                        <div class="booking-header">
+                            <span class="booking-title">${booking.package || 'N/A'}</span>
+                            <span class="status-badge ${statusClass}">${booking.status || 'pending'}</span>
+                        </div>
+                        <div class="booking-details">
+                            <div class="booking-detail-item">
+                                <i class="fas fa-hashtag"></i>
+                                <span>${booking.reference}</span>
+                            </div>
+                            <div class="booking-detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${new Date(booking.checkin).toLocaleDateString()}</span>
+                            </div>
+                            <div class="booking-detail-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>${new Date(booking.checkout).toLocaleDateString()}</span>
+                            </div>
+                            ${booking.assignedGuide ? `
+                                <div class="booking-detail-item">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span>${booking.assignedGuide.name || 'Guide Assigned'}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${booking.rating ? `
+                            <div class="rating-display" style="margin-top: 0.8rem; padding: 0.8rem; background: #fffbeb; border-radius: 8px;">
+                                <i class="fas fa-star"></i>
+                                <span>Rated ${booking.rating}/5</span>
+                            </div>
+                        ` : booking.status === 'completed' && booking.assignedGuide ? `
+                            <div class="booking-actions" style="margin-top: 0.8rem;">
+                                <button class="btn btn-success" onclick="openRatingModal('${booking._id}', '${booking.assignedGuide?.name || 'Guide'}', '${booking.reference}')">
+                                    <i class="fas fa-star"></i> Rate Guide
+                                </button>
+                            </div>
+                        ` : (booking.status === 'approved' || booking.status === 'active') && booking.assignedGuide ? `
+                            <div class="booking-actions" style="margin-top: 0.8rem;">
+                                <button class="chat-btn" onclick="openChat('${booking._id}', '${booking.assignedGuide?.name || 'Tour Guide'}', '${booking.reference}')">
+                                    <i class="fas fa-comments"></i> Chat with Guide
+                                </button>
+                            </div>
+                        ` : ''}
+                        ${booking.status === 'completed' && booking.assignedGuide ? (
+                            booking.tip ? `
+                                <div style="margin-top: 0.8rem; padding: 1rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; border: 2px solid #f59e0b;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="color: #92400e; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-gift"></i> Tip Given
+                                        </span>
+                                        <span style="color: #92400e; font-weight: bold; font-size: 1.4rem;">₱${(booking.tip || 0).toLocaleString()}</span>
+                                    </div>
+                                    <p style="margin-top: 0.5rem; color: #92400e; font-size: 0.875rem; text-align: center;">
+                                        <i class="fas fa-check-circle"></i> Thank you for your generosity!
+                                    </p>
+                                </div>
+                            ` : `
+                                <div style="margin-top: 0.8rem; padding: 0.8rem; background: rgba(245, 158, 11, 0.05); border-radius: 8px; border-top: 2px solid #f59e0b;">
+                                    <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.75rem; font-weight: 600; text-align: center;">
+                                        <i class="fas fa-heart"></i> Show Your Appreciation
+                                    </p>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+                                        <button class="btn" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 0.75rem 1rem; font-size: 0.9rem;" onclick="addTip('${booking._id}', 100)">
+                                            <i class="fas fa-coins"></i> ₱100
+                                        </button>
+                                        <button class="btn" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 0.75rem 1rem; font-size: 0.9rem;" onclick="addTip('${booking._id}', 500)">
+                                            <i class="fas fa-coins"></i> ₱500
+                                        </button>
+                                        <button class="btn" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 0.75rem 1rem; font-size: 0.9rem;" onclick="addTip('${booking._id}', 1000)">
+                                            <i class="fas fa-coins"></i> ₱1000
+                                        </button>
+                                        <button class="btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 0.75rem 1rem; font-size: 0.9rem;" onclick="addCustomTip('${booking._id}')">
+                                            <i class="fas fa-edit"></i> Custom
+                                        </button>
+                                    </div>
+                                </div>
+                            `
+                        ) : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderRatingSection() {
+            const ratingSectionEl = document.getElementById('ratingSection');
+            const unratedBookings = bookings.filter(b => b.status === 'completed' && !b.rating && b.assignedGuide);
+            
+            if (unratedBookings.length === 0) {
+                ratingSectionEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-thumbs-up"></i>
+                        <p>All tours rated!</p>
+                        <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">Thank you for your feedback</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ratingSectionEl.innerHTML = unratedBookings.slice(0, 3).map(booking => `
+                <div class="booking-item">
+                    <div class="booking-header">
+                        <span class="booking-title">${booking.package}</span>
+                    </div>
+                    <div class="booking-details">
+                        <div class="booking-detail-item">
+                            <i class="fas fa-hashtag"></i>
+                            <span>${booking.reference}</span>
+                        </div>
+                        <div class="booking-detail-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>${booking.assignedGuide?.name || 'Guide'}</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn btn-success" onclick="openRatingModal('${booking._id}', '${booking.assignedGuide?.name || 'Guide'}', '${booking.reference}')">
+                            <i class="fas fa-star"></i> Rate Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openRatingModal(bookingId, guideName, reference) {
+            selectedRatingBooking = { id: bookingId, guideName, reference };
+            document.getElementById('modalBookingRef').textContent = `Booking: ${reference}`;
+            document.getElementById('modalGuideName').textContent = `Guide: ${guideName}`;
+            document.getElementById('selectedRating').value = '0';
+            document.getElementById('ratingComment').value = '';
+            resetStars();
+            document.getElementById('ratingModal').style.display = 'flex';
+            attachStarListeners();
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').style.display = 'none';
+            selectedRatingBooking = null;
+        }
+
+        function resetStars() {
+            const stars = document.querySelectorAll('#ratingStars i');
+            stars.forEach(star => {
+                star.className = 'far fa-star';
+            });
+        }
+
+        function attachStarListeners() {
+            const stars = document.querySelectorAll('#ratingStars i');
+            stars.forEach(star => {
+                star.onclick = function() {
+                    const rating = parseInt(this.dataset.rating);
+                    document.getElementById('selectedRating').value = rating;
+                    stars.forEach((s, index) => {
+                        s.className = index < rating ? 'fas fa-star' : 'far fa-star';
+                    });
+                };
+            });
+        }
+
+        async function submitRating() {
+            const rating = parseInt(document.getElementById('selectedRating').value);
+            if (!selectedRatingBooking || rating === 0) {
+                showToast('Please select a rating first', 'error');
+                return;
+            }
+            const comment = document.getElementById('ratingComment').value.trim();
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/bookings/${selectedRatingBooking.id}/rate`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ rating, comment })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to submit rating');
+                showToast('Rating submitted successfully!', 'success');
+                closeRatingModal();
+                loadUserBookings();
+            } catch (error) {
+                console.error('Rating submission error:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Tip Functions
+        async function addTip(bookingId, amount) {
+            const confirmed = await showConfirm(
+                `Add a ₱${amount.toLocaleString()} tip for your tour guide?`,
+                'Add Tip',
+                'Confirm',
+                'Cancel'
+            );
+            if (!confirmed) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/bookings/${bookingId}/tip`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ tipAmount: amount })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to add tip');
+                showToast(`₱${amount.toLocaleString()} tip added! Your guide will appreciate it.`, 'success');
+                loadUserBookings();
+            } catch (error) {
+                console.error('Tip error:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function addCustomTip(bookingId) {
+            const amount = await showInputModal('Custom Tip', 'Enter tip amount (₱):', '');
+            if (!amount || isNaN(amount) || amount <= 0) {
+                if (amount !== null) showToast('Please enter a valid amount', 'error');
+                return;
+            }
+
+            const tipAmount = parseInt(amount);
+            const confirmed = await showConfirm(
+                `Add a ₱${tipAmount.toLocaleString()} tip for your tour guide?`,
+                'Add Tip',
+                'Confirm',
+                'Cancel'
+            );
+            if (!confirmed) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/bookings/${bookingId}/tip`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ tipAmount })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to add tip');
+                showToast(`₱${tipAmount.toLocaleString()} tip added! Your guide will appreciate it.`, 'success');
+                loadUserBookings();
+            } catch (error) {
+                console.error('Tip error:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        function showDashboard() {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function showMyBookings() {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Refresh user data from server
+        async function refreshUserData() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // Update UI
+                    document.getElementById('sidebarUserName').textContent = currentUser.name;
+                    const avatar = document.getElementById('userAvatar');
+                    if (currentUser.profilePicture) {
+                        avatar.innerHTML = `<img src="${currentUser.profilePicture}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    } else {
+                        avatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing user data:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userStr = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('token');
+            
+            if (!userStr || !token) {
+                showToast('Please login to continue', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                if (!currentUser || !currentUser.name) {
+                    showToast('Invalid session', 'error');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('token');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+
+                document.getElementById('sidebarUserName').textContent = currentUser.name;
+                
+                // Update avatar with profile picture or initials
+                const avatar = document.getElementById('userAvatar');
+                if (currentUser.profilePicture) {
+                    avatar.innerHTML = `<img src="${currentUser.profilePicture}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                } else {
+                    avatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                }
+                
+                showToast(`Welcome back, ${currentUser.name}!`, 'success');
+                
+                // Refresh user data from server to get latest profile picture
+                refreshUserData();
+                
+                loadUserBookings();
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                showToast('Session error', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+            }
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('ratingModal');
+            if (event.target == modal) {
+                closeRatingModal();
+            }
+        }
+
+        // User Profile Management
+        function viewUserProfile() {
+            const modal = document.getElementById('userProfileModal');
+            modal.classList.remove('hidden');
+            
+            // Populate form with current user data
+            document.getElementById('userProfileName').value = currentUser.name || '';
+            document.getElementById('userProfileEmail').value = currentUser.email || '';
+            document.getElementById('userProfilePhone').value = currentUser.phone || '';
+            document.getElementById('userProfileBio').value = currentUser.bio || '';
+            
+            // Set profile picture
+            if (currentUser.profilePicture) {
+                document.getElementById('userProfileImage').src = currentUser.profilePicture;
+                document.getElementById('userProfileImage').classList.remove('hidden');
+                document.getElementById('userProfileInitials').classList.add('hidden');
+            } else {
+                const initials = currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+                document.getElementById('userProfileInitials').textContent = initials;
+                document.getElementById('userProfileImage').classList.add('hidden');
+                document.getElementById('userProfileInitials').classList.remove('hidden');
+            }
+        }
+
+        function closeUserProfileModal() {
+            document.getElementById('userProfileModal').classList.add('hidden');
+        }
+
+        function handleUserProfilePictureUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showToast('Please select an image file', 'error');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Image size must be less than 5MB', 'error');
+                return;
+            }
+            
+            // Preview image
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('userProfileImage');
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+                document.getElementById('userProfileInitials').classList.add('hidden');
+                
+                // Store in currentUser for saving
+                currentUser.profilePicture = e.target.result;
+                
+                showToast('Profile picture updated! Click Save Changes to apply.', 'info');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeUserProfilePicture() {
+            if (!confirm('Are you sure you want to remove your profile picture?')) return;
+            
+            // Reset to default
+            currentUser.profilePicture = null;
+            document.getElementById('userProfileImage').classList.add('hidden');
+            document.getElementById('userProfileImage').src = '';
+            const initials = currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+            document.getElementById('userProfileInitials').textContent = initials;
+            document.getElementById('userProfileInitials').classList.remove('hidden');
+            
+            showToast('Profile picture removed! Click Save Changes to apply.', 'info');
+        }
+
+        async function updateUserProfile(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+            
+            const profileData = {
+                name: document.getElementById('userProfileName').value,
+                phone: document.getElementById('userProfilePhone').value,
+                bio: document.getElementById('userProfileBio').value,
+                profilePicture: currentUser.profilePicture
+            };
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/auth/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(profileData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to update profile');
+                
+                // Update current user
+                currentUser = { ...currentUser, ...profileData };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Update sidebar
+                document.getElementById('sidebarUserName').textContent = currentUser.name;
+                const avatar = document.getElementById('userAvatar');
+                if (currentUser.profilePicture) {
+                    avatar.innerHTML = `<img src="${currentUser.profilePicture}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                } else {
+                    const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    avatar.textContent = initials;
+                }
+                
+                showToast('Profile updated successfully!', 'success');
+                setTimeout(() => {
+                    closeUserProfileModal();
+                }, 1500);
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+    </script>
+
+    <!-- Animations & Theme Management -->
+    <script src="/assets/js/animations.js"></script>
+    <script src="/assets/js/theme.js"></script>
+    <script src="/assets/js/chat.js"></script>
+    <script src="/assets/js/confirm-dialog.js"></script>
+</body>
+</html>

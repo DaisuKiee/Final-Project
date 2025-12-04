@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Daanbantayan Paradise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff',
+                            300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7',
+                            600: '#9333ea', 700: '#7e22ce', 800: '#6b21a8',
+                            900: '#581c87', 950: '#3b0764',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/img/dblogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/css/tailwind-theme.css">
+    <link rel="stylesheet" href="/assets/css/preloader.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Page Preloader -->
+    <div id="pagePreloader" class="page-preloader">
+        <div class="preloader-logo">
+            <i class="fas fa-umbrella-beach"></i>
+        </div>
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Loading Admin Dashboard<span class="loading-dots"></span></div>
+    </div>
+
+    <!-- Immediate Preloader Script -->
+    <script>
+        (function() {
+            var maxWaitTime = 1500;
+            var preloaderHidden = false;
+            
+            function hidePreloader() {
+                if (preloaderHidden) return;
+                preloaderHidden = true;
+                
+                var preloader = document.getElementById('pagePreloader');
+                if (preloader) {
+                    preloader.classList.add('hidden');
+                    setTimeout(function() {
+                        if (preloader.parentNode) {
+                            preloader.remove();
+                        }
+                    }, 500);
+                }
+            }
+            
+            window.addEventListener('load', hidePreloader);
+            setTimeout(hidePreloader, maxWaitTime);
+        })();
+    </script>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-umbrella-beach"></i>
+                    Daanbantayan Paradise
+                </div>
+                <div class="sidebar-subtitle">Admin Control Panel</div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-details">
+                    <h3 id="sidebarUserName">Administrator</h3>
+                    <p>System Admin</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">Main</div>
+                    <a href="#" class="menu-item active" onclick="showSection('dashboard')">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showSection('bookings')">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Bookings</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showSection('applications')">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Applications</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showSection('users')">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Website</div>
+                    <a href="index.html#home" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="index.html#about" class="menu-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About</span>
+                    </a>
+                    <a href="index.html#contact" class="menu-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button onclick="toggleTheme(event)" class="logout-btn" style="margin-bottom: 1rem;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                    <span>Toggle Theme</span>
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="content-section active">
+                <div class="top-bar">
+                    <h1><i class="fas fa-th-large"></i> Dashboard Overview</h1>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalBookings">0</h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="pendingBookings">0</h3>
+                        <p>Pending Bookings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalApplications">0</h3>
+                        <p>Tour Guide Applications</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="pendingApplications">0</h3>
+                        <p>Pending Applications</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="totalTourGuides">0</h3>
+                        <p>Active Tour Guides</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Bookings Overview</h3>
+                    </div>
+                    <canvas id="bookingsChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Booking Status Distribution</h3>
+                    </div>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> Monthly Revenue</h3>
+                    </div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-user-friends"></i> User Growth</h3>
+                    </div>
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab active">
+                        <i class="fas fa-clock"></i> Recent Bookings
+                    </div>
+                </div>
+                <div class="tab-content active" id="recentBookings">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading recent bookings...</div>
+                </div>
+            </div>
+            </section>
+
+            <!-- Bookings Section -->
+            <section id="bookingsSection" class="content-section">
+                <div class="top-bar">
+                    <h1><i class="fas fa-calendar-alt"></i> Booking Logs (Read-Only)</h1>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border-left: 4px solid #667eea;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-info-circle" style="color: #667eea; font-size: 1.5rem;"></i>
+                        <div>
+                            <strong style="color: #667eea;">Admin View - Read Only</strong>
+                            <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.9rem;">
+                                Tour guides handle booking approvals and rejections. You can monitor all bookings here for oversight and reporting.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Bar for Bookings -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                        <input type="text" id="bookingSearch" placeholder="Search by reference, package, user name, or status..." 
+                            style="width: 100%; padding: 0.875rem 1rem 0.875rem 3rem; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 0.95rem; transition: all 0.3s;"
+                            oninput="filterBookings(this.value)"
+                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'"
+                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                    </div>
+                </div>
+
+                <!-- Bookings Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab active" onclick="switchTab('allBookings')">
+                        <i class="fas fa-list"></i> All Bookings
+                    </div>
+                    <div class="tab" onclick="switchTab('pendingBookingsTab')">
+                        <i class="fas fa-exclamation-circle"></i> Pending Bookings
+                    </div>
+                    <div class="tab" onclick="switchTab('completedChatsTab')">
+                        <i class="fas fa-comments"></i> Completed Chats
+                    </div>
+                </div>
+                <div id="allBookings" class="tab-content active">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading bookings...</div>
+                </div>
+                <div id="pendingBookingsTab" class="tab-content">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading pending bookings...</div>
+                </div>
+                <div id="completedChatsTab" class="tab-content">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading completed chats...</div>
+                </div>
+            </div>
+            </section>
+
+            <!-- Applications Section -->
+            <section id="applicationsSection" class="content-section">
+                <div class="top-bar">
+                    <h1><i class="fas fa-user-tie"></i> Tour Guide Applications</h1>
+                </div>
+
+                <!-- Search Bar for Applications -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                        <input type="text" id="applicationSearch" placeholder="Search by name, email, phone, or status..." 
+                            style="width: 100%; padding: 0.875rem 1rem 0.875rem 3rem; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 0.95rem; transition: all 0.3s;"
+                            oninput="filterApplications(this.value)"
+                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'"
+                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                    </div>
+                </div>
+
+                <!-- Applications Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab active" onclick="switchTab('allApplications')">
+                        <i class="fas fa-users"></i> All Applications
+                    </div>
+                    <div class="tab" onclick="switchTab('pendingApplicationsTab')">
+                        <i class="fas fa-user-clock"></i> Pending Applications
+                    </div>
+                </div>
+                <div id="allApplications" class="tab-content active">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading applications...</div>
+                </div>
+                <div id="pendingApplicationsTab" class="tab-content">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading pending applications...</div>
+                </div>
+            </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="usersSection" class="content-section">
+                <div class="top-bar">
+                    <h1><i class="fas fa-users"></i> Users Management</h1>
+                </div>
+
+                <!-- Search Bar for Users -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                        <input type="text" id="userSearch" placeholder="Search by name, email, phone, or role..." 
+                            style="width: 100%; padding: 0.875rem 1rem 0.875rem 3rem; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 0.95rem; transition: all 0.3s;"
+                            oninput="filterUsers(this.value)"
+                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'"
+                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs-header">
+                        <div class="tab active" onclick="switchTab('allUsers')">
+                            <i class="fas fa-list"></i> All Users
+                        </div>
+                        <div class="tab" onclick="switchTab('tourGuides')">
+                            <i class="fas fa-user-tie"></i> Tour Guides
+                        </div>
+                    </div>
+                    <div id="allUsers" class="tab-content active">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading users...</div>
+                    </div>
+                    <div id="tourGuides" class="tab-content">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading tour guides...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Custom Input Modal -->
+    <div id="inputModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle">Input Required</h3>
+                <button class="modal-close" onclick="closeInputModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label id="modalLabel" class="modal-label">Enter value:</label>
+                <input type="text" id="modalInput" class="modal-input" />
+                <textarea id="modalTextarea" class="modal-textarea" style="display: none;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeInputModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitInputModal()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let bookings = [];
+        let applications = [];
+        let users = [];
+        let charts = {};
+        let filteredBookings = [];
+        let filteredApplications = [];
+        let filteredUsers = [];
+
+        // Section Navigation
+        function showSection(sectionName) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            const sectionMap = {
+                'dashboard': 'dashboardSection',
+                'bookings': 'bookingsSection',
+                'applications': 'applicationsSection',
+                'users': 'usersSection'
+            };
+            
+            const sectionId = sectionMap[sectionName];
+            if (sectionId) {
+                document.getElementById(sectionId).classList.add('active');
+                event.target.classList.add('active');
+            }
+            
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${message}</span>`;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Scroll to Top Functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/Hide Scroll to Top Button
+        window.addEventListener('scroll', function() {
+            const scrollButton = document.getElementById('scrollToTop');
+            if (window.pageYOffset > 300) {
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#' && href !== '#!') {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+
+        function logout() {
+            showToast('Logging out...', 'info');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('token');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function switchTab(tabId) {
+            const parentTabs = event.target.closest('.tabs-container');
+            const tabs = parentTabs.querySelectorAll('.tab');
+            const contents = parentTabs.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        async function loadAdminData() {
+            if (!currentUser) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('No token found');
+
+                // Fetch bookings
+                const bookingsResponse = await fetch('/api/bookings/all', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!bookingsResponse.ok) {
+                    const errorData = await bookingsResponse.json();
+                    throw new Error(errorData.error || 'Failed to fetch bookings');
+                }
+                
+                bookings = await bookingsResponse.json();
+
+                // Fetch applications
+                const appsResponse = await fetch('/api/tourguide/applications', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!appsResponse.ok) {
+                    const errorData = await appsResponse.json();
+                    throw new Error(errorData.error || 'Failed to fetch applications');
+                }
+                
+                const appsData = await appsResponse.json();
+                applications = appsData.applications;
+
+                // Fetch users
+                const usersResponse = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!usersResponse.ok) {
+                    const errorData = await usersResponse.json();
+                    throw new Error(errorData.error || 'Failed to fetch users');
+                }
+                
+                const usersData = await usersResponse.json();
+                users = usersData.users || [];
+
+                // Initialize filtered arrays
+                filteredBookings = [...bookings];
+                filteredApplications = [...applications];
+                filteredUsers = [...users];
+
+                // Update stats
+                const totalBookings = bookings.length;
+                const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+                const totalApplications = applications.length;
+                const pendingApplications = applications.filter(a => a.status === 'pending').length;
+                const totalUsersCount = users.length;
+                const totalTourGuidesCount = users.filter(u => u.role === 'tourguide').length;
+
+                document.getElementById('totalBookings').textContent = totalBookings;
+                document.getElementById('pendingBookings').textContent = pendingBookings;
+                document.getElementById('totalApplications').textContent = totalApplications;
+                document.getElementById('pendingApplications').textContent = pendingApplications;
+                document.getElementById('totalUsers').textContent = totalUsersCount;
+                document.getElementById('totalTourGuides').textContent = totalTourGuidesCount;
+
+                renderBookings();
+                renderApplications();
+                renderUsers();
+                renderCharts();
+                renderRecentBookings();
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showToast('Failed to load data: ' + error.message, 'error');
+            }
+        }
+
+        // Render Charts
+        function renderCharts() {
+            // Bookings Overview Chart
+            const bookingsByMonth = getBookingsByMonth();
+            const ctx1 = document.getElementById('bookingsChart');
+            if (charts.bookingsChart) charts.bookingsChart.destroy();
+            charts.bookingsChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: bookingsByMonth.labels,
+                    datasets: [{
+                        label: 'Bookings',
+                        data: bookingsByMonth.data,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Status Distribution Chart
+            const statusData = getStatusDistribution();
+            const ctx2 = document.getElementById('statusChart');
+            if (charts.statusChart) charts.statusChart.destroy();
+            charts.statusChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: statusData.labels,
+                    datasets: [{
+                        data: statusData.data,
+                        backgroundColor: ['#fbbf24', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+
+            // Revenue Chart
+            const revenueData = getRevenueByMonth();
+            const ctx3 = document.getElementById('revenueChart');
+            if (charts.revenueChart) charts.revenueChart.destroy();
+            charts.revenueChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: revenueData.labels,
+                    datasets: [{
+                        label: 'Revenue (₱)',
+                        data: revenueData.data,
+                        backgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // User Growth Chart
+            const ctx4 = document.getElementById('userGrowthChart');
+            if (charts.userGrowthChart) charts.userGrowthChart.destroy();
+            charts.userGrowthChart = new Chart(ctx4, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Users',
+                        data: [12, 19, 25, 32, 45, 58],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function getBookingsByMonth() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const currentMonth = new Date().getMonth();
+            const last6Months = [];
+            const data = new Array(6).fill(0);
+
+            for (let i = 5; i >= 0; i--) {
+                const monthIndex = (currentMonth - i + 12) % 12;
+                last6Months.push(months[monthIndex]);
+            }
+
+            bookings.forEach(booking => {
+                const bookingDate = new Date(booking.createdAt || booking.checkin);
+                const monthDiff = currentMonth - bookingDate.getMonth();
+                if (monthDiff >= 0 && monthDiff < 6) {
+                    data[5 - monthDiff]++;
+                }
+            });
+
+            return { labels: last6Months, data };
+        }
+
+        function getStatusDistribution() {
+            const statuses = ['pending', 'approved', 'active', 'completed', 'rejected'];
+            const data = statuses.map(status => 
+                bookings.filter(b => b.status === status).length
+            );
+            return {
+                labels: statuses.map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+                data
+            };
+        }
+
+        function getRevenueByMonth() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const currentMonth = new Date().getMonth();
+            const last6Months = [];
+            const data = new Array(6).fill(0);
+
+            for (let i = 5; i >= 0; i--) {
+                const monthIndex = (currentMonth - i + 12) % 12;
+                last6Months.push(months[monthIndex]);
+            }
+
+            bookings.forEach(booking => {
+                if (booking.status === 'completed' || booking.status === 'approved') {
+                    const bookingDate = new Date(booking.createdAt || booking.checkin);
+                    const monthDiff = currentMonth - bookingDate.getMonth();
+                    if (monthDiff >= 0 && monthDiff < 6) {
+                        data[5 - monthDiff] += booking.totalAmount || 0;
+                    }
+                }
+            });
+
+            return { labels: last6Months, data };
+        }
+
+        function renderRecentBookings() {
+            const recentBookingsEl = document.getElementById('recentBookings');
+            const recentBookings = bookings.slice(0, 5);
+
+            if (recentBookings.length === 0) {
+                recentBookingsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No recent bookings</p>
+                    </div>
+                `;
+            } else {
+                recentBookingsEl.innerHTML = recentBookings.map(booking => {
+                    const statusClass = `status-${booking.status || 'pending'}`;
+                    return `
+                        <div class="booking-item">
+                            <div class="item-header">
+                                <span class="item-title">${booking.package || 'N/A'}</span>
+                                <span class="status-badge ${statusClass}">${booking.status || 'pending'}</span>
+                            </div>
+                            <div class="item-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>${booking.user?.name || 'Unknown User'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${new Date(booking.checkin).toLocaleDateString()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₱${(booking.totalAmount || 0).toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Filter Functions
+        function filterBookings(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            
+            if (!term) {
+                filteredBookings = [...bookings];
+            } else {
+                filteredBookings = bookings.filter(booking => {
+                    return (
+                        (booking.reference && booking.reference.toLowerCase().includes(term)) ||
+                        (booking.package && booking.package.toLowerCase().includes(term)) ||
+                        (booking.user?.name && booking.user.name.toLowerCase().includes(term)) ||
+                        (booking.user?.email && booking.user.email.toLowerCase().includes(term)) ||
+                        (booking.status && booking.status.toLowerCase().includes(term))
+                    );
+                });
+            }
+            
+            renderBookings();
+        }
+
+        function filterApplications(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            
+            if (!term) {
+                filteredApplications = [...applications];
+            } else {
+                filteredApplications = applications.filter(app => {
+                    return (
+                        (app.name && app.name.toLowerCase().includes(term)) ||
+                        (app.user?.name && app.user.name.toLowerCase().includes(term)) ||
+                        (app.user?.email && app.user.email.toLowerCase().includes(term)) ||
+                        (app.phone && app.phone.toLowerCase().includes(term)) ||
+                        (app.status && app.status.toLowerCase().includes(term)) ||
+                        (app.languages && app.languages.toLowerCase().includes(term))
+                    );
+                });
+            }
+            
+            renderApplications();
+        }
+
+        function filterUsers(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            
+            if (!term) {
+                filteredUsers = [...users];
+            } else {
+                filteredUsers = users.filter(user => {
+                    return (
+                        (user.name && user.name.toLowerCase().includes(term)) ||
+                        (user.email && user.email.toLowerCase().includes(term)) ||
+                        (user.phone && user.phone.toLowerCase().includes(term)) ||
+                        (user.role && user.role.toLowerCase().includes(term))
+                    );
+                });
+            }
+            
+            renderUsers();
+        }
+
+        function renderUsers() {
+            const allUsersEl = document.getElementById('allUsers');
+            const tourGuidesEl = document.getElementById('tourGuides');
+
+            if (filteredUsers.length === 0) {
+                allUsersEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No users found</p>
+                    </div>
+                `;
+            } else {
+                allUsersEl.innerHTML = filteredUsers.map(user => {
+                    const isCurrentUser = user._id === currentUser._id;
+                    const isAdmin = user.role === 'admin';
+                    const isSuspended = user.suspended;
+                    const profilePic = user.profilePicture || '/img/unnamed.jpg';
+                    
+                    return `
+                    <div class="booking-item user-card ${isSuspended ? 'suspended-user' : ''}">
+                        <div class="user-profile-section">
+                            <img src="${profilePic}" alt="${user.name}" class="user-profile-img" onerror="this.src='/img/unnamed.jpg'">
+                            <div class="user-info-text">
+                                <div class="item-header">
+                                    <span class="item-title">
+                                        ${user.name}
+                                        ${isSuspended ? '<span class="status-badge status-rejected" style="margin-left: 0.5rem;">SUSPENDED</span>' : ''}
+                                    </span>
+                                    <span class="status-badge status-${user.role === 'admin' ? 'completed' : user.role === 'tourguide' ? 'approved' : 'active'}">${user.role}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${user.email}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${user.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${new Date(user.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            ${isSuspended ? `
+                            <div class="detail-item" style="grid-column: 1 / -1;">
+                                <i class="fas fa-ban"></i>
+                                <span><strong>Reason:</strong> ${user.suspendedReason || 'No reason provided'}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ${!isCurrentUser ? `
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editUser('${user._id}')" style="flex: 1;">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            ${!isAdmin ? `
+                                ${!isSuspended ? `
+                                <button class="btn btn-danger" onclick="suspendUser('${user._id}')" style="flex: 1;">
+                                    <i class="fas fa-ban"></i> Suspend
+                                </button>
+                                ` : `
+                                <button class="btn btn-success" onclick="unsuspendUser('${user._id}')" style="flex: 1;">
+                                    <i class="fas fa-check"></i> Unsuspend
+                                </button>
+                                `}
+                                <button class="btn btn-danger" onclick="deleteUser('${user._id}')" style="flex: 1;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                }).join('');
+            }
+
+            const tourGuides = filteredUsers.filter(u => u.role === 'tourguide');
+            if (tourGuides.length === 0) {
+                tourGuidesEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No tour guides found</p>
+                    </div>
+                `;
+            } else {
+                tourGuidesEl.innerHTML = tourGuides.map(user => {
+                    const isCurrentUser = user._id === currentUser._id;
+                    const isSuspended = user.suspended;
+                    const profilePic = user.profilePicture || '/img/unnamed.jpg';
+                    
+                    return `
+                    <div class="booking-item user-card ${isSuspended ? 'suspended-user' : ''}">
+                        <div class="user-profile-section">
+                            <img src="${profilePic}" alt="${user.name}" class="user-profile-img" onerror="this.src='/img/unnamed.jpg'">
+                            <div class="user-info-text">
+                                <div class="item-header">
+                                    <span class="item-title">
+                                        ${user.name}
+                                        ${isSuspended ? '<span class="status-badge status-rejected" style="margin-left: 0.5rem;">SUSPENDED</span>' : ''}
+                                    </span>
+                                    <span class="status-badge status-approved">Tour Guide</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${user.email}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${user.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${new Date(user.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            ${isSuspended ? `
+                            <div class="detail-item" style="grid-column: 1 / -1;">
+                                <i class="fas fa-ban"></i>
+                                <span><strong>Reason:</strong> ${user.suspendedReason || 'No reason provided'}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ${!isCurrentUser ? `
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editUser('${user._id}')" style="flex: 1;">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            ${!isSuspended ? `
+                            <button class="btn btn-danger" onclick="suspendUser('${user._id}')" style="flex: 1;">
+                                <i class="fas fa-ban"></i> Suspend
+                            </button>
+                            ` : `
+                            <button class="btn btn-success" onclick="unsuspendUser('${user._id}')" style="flex: 1;">
+                                <i class="fas fa-check"></i> Unsuspend
+                            </button>
+                            `}
+                            <button class="btn btn-danger" onclick="deleteUser('${user._id}')" style="flex: 1;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                }).join('');
+            }
+        }
+
+        function renderBookings() {
+            // All bookings
+            const allBookingsEl = document.getElementById('allBookings');
+            if (filteredBookings.length === 0) {
+                allBookingsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No bookings available</p>
+                    </div>
+                `;
+            } else {
+                allBookingsEl.innerHTML = filteredBookings.map(booking => {
+                    const statusClass = `status-${booking.status || 'pending'}`;
+                    return `
+                        <div class="booking-item">
+                            <div class="item-header">
+                                <span class="item-title">${booking.package || 'N/A'}</span>
+                                <span class="status-badge ${statusClass}">${booking.status || 'pending'}</span>
+                            </div>
+                            <div class="item-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>${booking.user?.name || 'Unknown User'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-hashtag"></i>
+                                    <span>${booking.reference}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${new Date(booking.checkin).toLocaleDateString()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>${new Date(booking.checkout).toLocaleDateString()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>${booking.guests || 'N/A'} Guests</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₱${(booking.totalAmount || 0).toLocaleString()}</span>
+                                </div>
+                            </div>
+                            ${booking.status === 'pending' ? `
+                                <div style="padding: 0.75rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; text-align: center;">
+                                    <i class="fas fa-info-circle" style="color: #667eea;"></i>
+                                    <span style="color: #667eea; font-weight: 600; margin-left: 0.5rem;">Awaiting Tour Guide Approval</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Pending bookings
+            const pendingBookingsEl = document.getElementById('pendingBookingsTab');
+            const pendingBookingsList = filteredBookings.filter(b => b.status === 'pending');
+            
+            if (pendingBookingsList.length === 0) {
+                pendingBookingsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No pending bookings</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">All bookings have been processed</p>
+                    </div>
+                `;
+            } else {
+                pendingBookingsEl.innerHTML = pendingBookingsList.map(booking => `
+                    <div class="booking-item">
+                        <div class="item-header">
+                            <span class="item-title">${booking.package || 'N/A'}</span>
+                            <span class="status-badge status-pending">Pending</span>
+                        </div>
+                        <div class="item-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>${booking.user?.name || 'Unknown User'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${booking.user?.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-id-card"></i>
+                                <span>ID: ${booking.idNumber || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${booking.contactNumber || booking.user?.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${new Date(booking.checkin).toLocaleDateString()}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>${new Date(booking.checkout).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div style="padding: 0.75rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; text-align: center; margin-top: 1rem;">
+                            <i class="fas fa-info-circle" style="color: #667eea;"></i>
+                            <span style="color: #667eea; font-weight: 600; margin-left: 0.5rem;">Awaiting Tour Guide Approval</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Render completed chats
+            renderCompletedChats();
+        }
+
+        async function renderCompletedChats() {
+            const completedChatsEl = document.getElementById('completedChatsTab');
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/chat/admin/completed-chats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load completed chats');
+                }
+                
+                const completedBookings = await response.json();
+                const bookingsWithChats = completedBookings.filter(b => b.messageCount > 0);
+                
+                if (bookingsWithChats.length === 0) {
+                    completedChatsEl.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-comments"></i>
+                            <p>No completed bookings with chat history</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                completedChatsEl.innerHTML = bookingsWithChats.map(booking => `
+                    <div class="list-item">
+                        <div class="item-content">
+                            <div class="item-header">
+                                <span class="item-title">${booking.reference} - ${booking.package}</span>
+                                <span class="status-badge status-completed">Completed</span>
+                            </div>
+                            <div class="item-details">
+                                <div><i class="fas fa-user"></i> User: ${booking.user?.name || 'N/A'}</div>
+                                <div><i class="fas fa-user-tie"></i> Guide: ${booking.assignedGuide?.name || 'N/A'}</div>
+                                <div><i class="fas fa-comments"></i> Messages: ${booking.messageCount}</div>
+                                ${booking.lastMessage ? `
+                                    <div style="margin-top: 0.5rem; padding: 0.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 6px;">
+                                        <small style="color: #64748b;">Last message:</small>
+                                        <div style="color: #1e293b; margin-top: 0.25rem;">${booking.lastMessage.text.substring(0, 100)}${booking.lastMessage.text.length > 100 ? '...' : ''}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="viewChatConversation('${booking._id}')" style="flex: 1;">
+                                <i class="fas fa-eye"></i> View Conversation
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading completed chats:', error);
+                completedChatsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading completed chats</p>
+                        <small>${error.message}</small>
+                    </div>
+                `;
+            }
+        }
+
+        async function viewChatConversation(bookingId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/chat/messages/${bookingId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load conversation');
+                }
+                
+                const messages = await response.json();
+                showChatModal(bookingId, messages);
+            } catch (error) {
+                console.error('Error loading conversation:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        function showChatModal(bookingId, messages) {
+            const booking = bookings.find(b => b._id === bookingId);
+            if (!booking) return;
+            
+            const modalHTML = `
+                <div id="chatModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+                    <div style="background: white; border-radius: 16px; max-width: 800px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <div style="padding: 1.5rem; border-bottom: 2px solid #f0f4ff; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="margin: 0; color: #1e293b; font-size: 1.3rem;">
+                                    <i class="fas fa-comments" style="color: #667eea;"></i> Conversation: ${booking.reference}
+                                </h3>
+                                <p style="margin: 0.5rem 0 0 0; color: #64748b; font-size: 0.9rem;">
+                                    ${booking.user?.name} ↔ ${booking.assignedGuide?.name}
+                                </p>
+                            </div>
+                            <button onclick="closeChatModal()" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; padding: 0.5rem;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div style="flex: 1; overflow-y: auto; padding: 1.5rem; background: #f8fafc;">
+                            ${messages.length === 0 ? `
+                                <div style="text-align: center; padding: 3rem; color: #64748b;">
+                                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                    <p>No messages in this conversation</p>
+                                </div>
+                            ` : messages.map(msg => {
+                                const isUser = msg.senderRole === 'user';
+                                return `
+                                    <div style="display: flex; justify-content: ${isUser ? 'flex-start' : 'flex-end'}; margin-bottom: 1rem;">
+                                        <div style="max-width: 70%; background: ${isUser ? 'white' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}; color: ${isUser ? '#1e293b' : 'white'}; padding: 0.75rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                            <div style="font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; opacity: 0.9;">
+                                                ${msg.senderId?.name || 'Unknown'}
+                                            </div>
+                                            ${msg.messageType === 'image' ? `
+                                                <img src="${msg.attachment?.url}" style="max-width: 100%; border-radius: 8px; margin-bottom: 0.5rem;" alt="Image">
+                                            ` : msg.messageType === 'file' ? `
+                                                <div style="padding: 0.5rem; background: rgba(0,0,0,0.1); border-radius: 6px; margin-bottom: 0.5rem;">
+                                                    <i class="fas fa-file"></i> ${msg.attachment?.originalName}
+                                                </div>
+                                            ` : ''}
+                                            <div>${msg.message}</div>
+                                            <div style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.7;">
+                                                ${new Date(msg.timestamp).toLocaleString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div style="padding: 1rem 1.5rem; border-top: 2px solid #f0f4ff; background: rgba(102, 126, 234, 0.05);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #667eea;">
+                                <i class="fas fa-lock"></i>
+                                <span style="font-size: 0.9rem; font-weight: 600;">Read-Only Mode - Admin View</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeChatModal() {
+            const modal = document.getElementById('chatModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function renderApplications() {
+            // All applications
+            const allApplicationsEl = document.getElementById('allApplications');
+            if (filteredApplications.length === 0) {
+                allApplicationsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No applications available</p>
+                    </div>
+                `;
+            } else {
+                allApplicationsEl.innerHTML = filteredApplications.map(application => {
+                    const statusClass = `status-${application.status || 'pending'}`;
+                    return `
+                        <div class="application-item">
+                            <div class="item-header">
+                                <span class="item-title">${application.name || 'N/A'}</span>
+                                <span class="status-badge ${statusClass}">${application.status || 'pending'}</span>
+                            </div>
+                            <div class="item-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>${application.user?.name || 'Unknown User'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${application.user?.email || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>${application.phone || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${application.address || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>${application.languages || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${new Date(application.createdAt).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            ${application.status === 'pending' ? `
+                                <div class="item-actions">
+                                    <button class="btn btn-success" onclick="approveApplication('${application._id}')" style="flex: 1;">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-danger" onclick="rejectApplication('${application._id}')" style="flex: 1;">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Pending applications
+            const pendingApplicationsEl = document.getElementById('pendingApplicationsTab');
+            const pendingAppsList = filteredApplications.filter(a => a.status === 'pending');
+            
+            if (pendingAppsList.length === 0) {
+                pendingApplicationsEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No pending applications</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">All applications have been reviewed</p>
+                    </div>
+                `;
+            } else {
+                pendingApplicationsEl.innerHTML = pendingAppsList.map(application => `
+                    <div class="application-item">
+                        <div class="item-header">
+                            <span class="item-title">${application.name || 'N/A'}</span>
+                            <span class="status-badge status-pending">Pending</span>
+                        </div>
+                        <div class="item-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>${application.user?.name || 'Unknown User'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${application.user?.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${application.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${application.address || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>${application.experience || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                <span>${application.languages || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-success" onclick="approveApplication('${application._id}')" style="flex: 1;">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectApplication('${application._id}')" style="flex: 1;">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Booking approval/rejection removed - Tour guides handle this now
+        // Admin has read-only access to booking logs
+
+        async function approveApplication(applicationId) {
+            const confirmed = await showConfirm(
+                'Are you sure you want to approve this application? This will grant tour guide access.',
+                'Approve Application',
+                'Approve',
+                'Cancel'
+            );
+            if (!confirmed) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/tourguide/applications/${applicationId}/approve`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to approve application');
+                
+                showToast('Application approved successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function rejectApplication(applicationId) {
+            const confirmed = await showConfirm(
+                'Are you sure you want to reject this application?',
+                'Reject Application',
+                'Reject',
+                'Cancel'
+            );
+            if (!confirmed) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/tourguide/applications/${applicationId}/reject`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Failed to reject application');
+                
+                showToast('Application rejected successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Custom Input Modal Functions
+        let modalResolve = null;
+
+        function showInputModal(title, label, defaultValue = '', isTextarea = false) {
+            return new Promise((resolve) => {
+                modalResolve = resolve;
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalLabel').textContent = label;
+                
+                const input = document.getElementById('modalInput');
+                const textarea = document.getElementById('modalTextarea');
+                
+                if (isTextarea) {
+                    input.style.display = 'none';
+                    textarea.style.display = 'block';
+                    textarea.value = defaultValue;
+                    setTimeout(() => textarea.focus(), 100);
+                } else {
+                    input.style.display = 'block';
+                    textarea.style.display = 'none';
+                    input.value = defaultValue;
+                    setTimeout(() => input.focus(), 100);
+                }
+                
+                document.getElementById('inputModal').classList.add('active');
+            });
+        }
+
+        function closeInputModal() {
+            document.getElementById('inputModal').classList.remove('active');
+            if (modalResolve) {
+                modalResolve(null);
+                modalResolve = null;
+            }
+        }
+
+        function submitInputModal() {
+            const input = document.getElementById('modalInput');
+            const textarea = document.getElementById('modalTextarea');
+            const value = input.style.display === 'none' ? textarea.value : input.value;
+            
+            document.getElementById('inputModal').classList.remove('active');
+            if (modalResolve) {
+                modalResolve(value);
+                modalResolve = null;
+            }
+        }
+
+        // Handle Enter key in modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalInput = document.getElementById('modalInput');
+            const modalTextarea = document.getElementById('modalTextarea');
+            
+            modalInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitInputModal();
+                }
+            });
+
+            // Close modal on overlay click
+            document.getElementById('inputModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeInputModal();
+                }
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('inputModal');
+                    if (modal.classList.contains('active')) {
+                        closeInputModal();
+                    }
+                }
+            });
+        });
+
+        // User Management Functions
+        async function editUser(userId) {
+            const user = users.find(u => u._id === userId);
+            if (!user) return;
+
+            const name = await showInputModal('Edit User', 'Enter new name:', user.name);
+            if (!name) return;
+
+            const email = await showInputModal('Edit User', 'Enter new email:', user.email);
+            if (!email) return;
+
+            const phone = await showInputModal('Edit User', 'Enter new phone:', user.phone || '');
+
+            const role = await showInputModal('Edit User', 'Enter role (user/tourguide/admin):', user.role);
+            if (!role || !['user', 'tourguide', 'admin'].includes(role)) {
+                showToast('Invalid role. Must be: user, tourguide, or admin', 'error');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, phone, role })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'Failed to update user');
+
+                showToast('User updated successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteUser(userId) {
+            const user = users.find(u => u._id === userId);
+            if (!user) return;
+
+            const confirmed = await showConfirm(
+                `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
+                'Delete User',
+                'Delete',
+                'Cancel'
+            );
+            if (!confirmed) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'Failed to delete user');
+
+                showToast('User deleted successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function suspendUser(userId) {
+            const user = users.find(u => u._id === userId);
+            if (!user) return;
+
+            const reason = await showInputModal(
+                'Suspend User', 
+                `Enter reason for suspending ${user.name}:`, 
+                '', 
+                true
+            );
+            if (reason === null || reason === '') {
+                showToast('Suspension reason is required', 'error');
+                return;
+            }
+
+            const confirmed = await showConfirm(
+                `Are you sure you want to suspend ${user.name}?`,
+                'Suspend User',
+                'Suspend',
+                'Cancel'
+            );
+            if (!confirmed) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/admin/users/${userId}/suspend`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'Failed to suspend user');
+
+                showToast('User suspended successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function unsuspendUser(userId) {
+            const user = users.find(u => u._id === userId);
+            if (!user) return;
+
+            const confirmed = await showConfirm(
+                `Are you sure you want to unsuspend ${user.name}?`,
+                'Unsuspend User',
+                'Unsuspend',
+                'Cancel'
+            );
+            if (!confirmed) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/admin/users/${userId}/unsuspend`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'Failed to unsuspend user');
+
+                showToast('User unsuspended successfully!', 'success');
+                loadAdminData();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const userStr = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('token');
+            
+            if (!userStr || !token) {
+                showToast('Please login to continue', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                
+                if (!currentUser || !currentUser.name || !currentUser.role) {
+                    showToast('Invalid session data', 'error');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('token');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+
+                if (currentUser.role !== 'admin') {
+                    showToast('Admin access required', 'error');
+                    setTimeout(() => window.location.href = 'index.html#login', 2000);
+                    return;
+                }
+
+                document.getElementById('sidebarUserName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                showToast(`Welcome back, ${currentUser.name}!`, 'success');
+                loadAdminData();
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                showToast('Session error. Please login again.', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+            }
+        });
+    </script>
+
+    <!-- Animations & Theme Management -->
+    <script src="/assets/js/animations.js"></script>
+    <script src="/assets/js/theme.js"></script>
+    <script src="/assets/js/confirm-dialog.js"></script>
+</body>
+</html>
