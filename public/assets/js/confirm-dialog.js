@@ -81,87 +81,110 @@ function showConfirm(message, title = 'Confirm Action', confirmText = 'Confirm',
 
 // Input Modal System
 let inputResolve = null;
+let currentInputModal = null;
 
 function showInputModal(title, label, defaultValue = '', isTextarea = false) {
     return new Promise((resolve) => {
         inputResolve = resolve;
         
-        // Create modal if it doesn't exist
-        let modal = document.getElementById('inputModal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'inputModal';
-            modal.className = 'hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4';
-            modal.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 id="inputModalTitle" class="text-xl font-bold text-gray-900 dark:text-white"></h3>
-                            <button onclick="closeInputModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl">
-                                &times;
-                            </button>
-                        </div>
-                        <label id="inputModalLabel" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"></label>
-                        <input type="text" id="inputModalInput" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all mb-4">
-                        <textarea id="inputModalTextarea" rows="4" class="hidden w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all mb-4"></textarea>
-                        <div class="flex gap-3">
-                            <button onclick="closeInputModal()" class="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold rounded-lg transition-colors">
-                                Cancel
-                            </button>
-                            <button onclick="submitInputModal()" class="flex-1 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors">
-                                Submit
-                            </button>
-                        </div>
+        // Remove existing modal if any
+        if (currentInputModal) {
+            currentInputModal.remove();
+            currentInputModal = null;
+        }
+        
+        // Create new modal
+        const modal = document.createElement('div');
+        modal.id = 'inputModal';
+        modal.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4';
+        modal.innerHTML = `
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">${title}</h3>
+                        <button class="modal-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl">
+                            &times;
+                        </button>
+                    </div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">${label}</label>
+                    ${isTextarea 
+                        ? `<textarea class="modal-input w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all mb-4" rows="4">${defaultValue}</textarea>`
+                        : `<input type="text" class="modal-input w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 transition-all mb-4" value="${defaultValue}">`
+                    }
+                    <div class="flex gap-3">
+                        <button class="modal-cancel flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button class="modal-submit flex-1 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors">
+                            Submit
+                        </button>
                     </div>
                 </div>
-            `;
-            document.body.appendChild(modal);
-        }
+            </div>
+        `;
         
-        // Update content
-        document.getElementById('inputModalTitle').textContent = title;
-        document.getElementById('inputModalLabel').textContent = label;
+        document.body.appendChild(modal);
+        currentInputModal = modal;
         
-        const input = document.getElementById('inputModalInput');
-        const textarea = document.getElementById('inputModalTextarea');
+        // Get elements
+        const inputElement = modal.querySelector('.modal-input');
+        const closeBtn = modal.querySelector('.modal-close');
+        const cancelBtn = modal.querySelector('.modal-cancel');
+        const submitBtn = modal.querySelector('.modal-submit');
         
-        if (isTextarea) {
-            input.classList.add('hidden');
-            textarea.classList.remove('hidden');
-            textarea.value = defaultValue;
-            setTimeout(() => textarea.focus(), 100);
-        } else {
-            input.classList.remove('hidden');
-            textarea.classList.add('hidden');
-            input.value = defaultValue;
-            setTimeout(() => input.focus(), 100);
-        }
+        // Focus input
+        setTimeout(() => inputElement.focus(), 100);
         
-        // Show modal
-        modal.classList.remove('hidden');
+        // Handle submit
+        const handleSubmit = () => {
+            const value = inputElement.value;
+            modal.remove();
+            currentInputModal = null;
+            if (inputResolve) {
+                inputResolve(value);
+                inputResolve = null;
+            }
+            document.removeEventListener('keydown', keyHandler);
+        };
+        
+        // Handle cancel
+        const handleCancel = () => {
+            modal.remove();
+            currentInputModal = null;
+            if (inputResolve) {
+                inputResolve(null);
+                inputResolve = null;
+            }
+            document.removeEventListener('keydown', keyHandler);
+        };
+        
+        // Event listeners
+        submitBtn.onclick = handleSubmit;
+        closeBtn.onclick = handleCancel;
+        cancelBtn.onclick = handleCancel;
         
         // Close on backdrop click
         modal.onclick = (e) => {
-            if (e.target === modal) closeInputModal();
+            if (e.target === modal) handleCancel();
         };
         
-        // Handle Enter key
-        const enterHandler = (e) => {
+        // Handle keyboard
+        const keyHandler = (e) => {
             if (e.key === 'Enter' && !isTextarea) {
-                submitInputModal();
-                document.removeEventListener('keydown', enterHandler);
+                handleSubmit();
             } else if (e.key === 'Escape') {
-                closeInputModal();
-                document.removeEventListener('keydown', enterHandler);
+                handleCancel();
             }
         };
-        document.addEventListener('keydown', enterHandler);
+        document.addEventListener('keydown', keyHandler);
     });
 }
 
 function closeInputModal() {
-    const modal = document.getElementById('inputModal');
-    if (modal) modal.classList.add('hidden');
+    if (currentInputModal) {
+        currentInputModal.remove();
+        currentInputModal = null;
+    }
     if (inputResolve) {
         inputResolve(null);
         inputResolve = null;
@@ -169,14 +192,14 @@ function closeInputModal() {
 }
 
 function submitInputModal() {
-    const input = document.getElementById('inputModalInput');
-    const textarea = document.getElementById('inputModalTextarea');
-    const value = input.classList.contains('hidden') ? textarea.value : input.value;
-    
-    const modal = document.getElementById('inputModal');
-    if (modal) modal.classList.add('hidden');
-    if (inputResolve) {
-        inputResolve(value);
-        inputResolve = null;
+    if (currentInputModal) {
+        const inputElement = currentInputModal.querySelector('.modal-input');
+        const value = inputElement ? inputElement.value : '';
+        currentInputModal.remove();
+        currentInputModal = null;
+        if (inputResolve) {
+            inputResolve(value);
+            inputResolve = null;
+        }
     }
 }
